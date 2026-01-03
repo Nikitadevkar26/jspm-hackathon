@@ -3,6 +3,10 @@ const router = express.Router();
 
 const evaluatorController = require("../../controllers/admin/evaluatorController");
 const sendEvaluatorEmail = require("../../controllers/admin/evaluatorEmailController");
+const verifyAdminToken = require("../../middleware/authMiddleware");
+
+// Apply middleware to all routes in this router
+router.use(verifyAdminToken);
 
 /* ================================
    GET ALL EVALUATORS

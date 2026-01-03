@@ -1,5 +1,6 @@
 const AdminModel = require('../../models/admin/adminAuthModel');
 const db = require('../../config/db');
+const bcrypt = require('bcryptjs');
 
 /* ---------------- GET ALL ADMINS ---------------- */
 exports.getAllAdmins = async (req, res) => {
@@ -56,9 +57,18 @@ exports.loginAdmin = async (req, res) => {
       });
     }
 
+    const jwt = require('jsonwebtoken');
+
+    const token = jwt.sign(
+      { admin_id: admin.admin_id, email: admin.email },
+      process.env.JWT_SECRET || 'fallback_secret_do_not_use_in_production',
+      { expiresIn: '24h' }
+    );
+
     return res.status(200).json({
       success: true,
       message: 'Login successful',
+      token,
       admin: {
         admin_id: admin.admin_id,
         name: admin.name,

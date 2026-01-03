@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../../controllers/admin/registrationController");
+const verifyAdminToken = require("../../middleware/authMiddleware");
+
+// Apply middleware to all routes in this router
+router.use(verifyAdminToken);
 
 router.get("/ready-for-evaluation", controller.getTeamsReadyForEvaluation);
 router.get("/", controller.getTeams);
