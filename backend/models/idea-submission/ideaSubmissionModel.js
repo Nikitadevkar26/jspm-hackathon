@@ -3,7 +3,7 @@ const db = require("../../config/db"); // mysql2 connection
 
 const IdeaSubmission = {
   // CREATE / SUBMIT IDEA
-  create: (data, callback) => {
+  create: async (data) => {
     const sql = `
       INSERT INTO idea_submission
       (team_id, team_name, title, description, summary, drive_link, github_link, youtube_link)
@@ -21,27 +21,30 @@ const IdeaSubmission = {
       data.youtube_link || null
     ];
 
-    db.query(sql, values, callback);
+    const [result] = await db.query(sql, values);
+    return result;
   },
 
   // GET IDEA BY TEAM ID
-  getByTeamId: (teamId, callback) => {
+  getByTeamId: async (teamId) => {
     const sql = `
       SELECT * FROM idea_submission
       WHERE team_id = ?
       LIMIT 1
     `;
-    db.query(sql, [teamId], callback);
+    const [rows] = await db.query(sql, [teamId]);
+    return rows;
   },
 
   // GET IDEA BY ID (ADMIN / EVALUATOR)
-  getById: (id, callback) => {
+  getById: async (id) => {
     const sql = `SELECT * FROM idea_submission WHERE id = ?`;
-    db.query(sql, [id], callback);
+    const [rows] = await db.query(sql, [id]);
+    return rows;
   },
 
   // UPDATE IDEA
-  update: (id, data, callback) => {
+  update: async (id, data) => {
     const sql = `
       UPDATE idea_submission
       SET
@@ -64,7 +67,8 @@ const IdeaSubmission = {
       id
     ];
 
-    db.query(sql, values, callback);
+    const [result] = await db.query(sql, values);
+    return result;
   }
 };
 

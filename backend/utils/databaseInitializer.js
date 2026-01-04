@@ -31,6 +31,7 @@ const initializeDatabase = async () => {
         \`id_proof_image\` VARCHAR(255) NULL,
         \`resume_drive_url\` VARCHAR(255) NULL,
         \`status\` VARCHAR(45) NULL DEFAULT 'Pending',
+        \`created_at\` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`evaluator_id\`),
         UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC));
 
@@ -46,6 +47,8 @@ const initializeDatabase = async () => {
         \`theme\` VARCHAR(255) NULL,
         \`status\` VARCHAR(45) NULL DEFAULT 'Pending',
         \`payment_proof_image\` VARCHAR(255) NULL,
+        \`score\` INT DEFAULT 0,
+        \`created_at\` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`team_id\`),
         UNIQUE INDEX \`team_name_UNIQUE\` (\`team_name\` ASC),
         UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC));
@@ -65,6 +68,7 @@ const initializeDatabase = async () => {
         \`city\` VARCHAR(255) NULL,
         \`id_proof_image\` VARCHAR(255) NULL,
         \`role\` VARCHAR(45) NULL,
+        \`created_at\` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`member_id\`),
         UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC),
         INDEX \`fk_team_members_teams_idx\` (\`team_id\` ASC),
@@ -79,6 +83,7 @@ const initializeDatabase = async () => {
         \`team_id\` INT NOT NULL,
         \`email\` VARCHAR(255) NOT NULL,
         \`password\` VARCHAR(255) NOT NULL,
+        \`created_at\` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`login_id\`),
         UNIQUE INDEX \`email_UNIQUE\` (\`email\` ASC),
         INDEX \`fk_user_logins_teams_idx\` (\`team_id\` ASC),
@@ -98,6 +103,7 @@ const initializeDatabase = async () => {
         \`drive_link\` VARCHAR(255) NULL,
         \`github_link\` VARCHAR(255) NULL,
         \`youtube_link\` VARCHAR(255) NULL,
+        \`created_at\` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`id\`),
         INDEX \`fk_idea_submission_teams_idx\` (\`team_id\` ASC),
         CONSTRAINT \`fk_idea_submission_teams\`
@@ -110,6 +116,7 @@ const initializeDatabase = async () => {
         \`assignment_id\` INT NOT NULL AUTO_INCREMENT,
         \`team_id\` INT NOT NULL,
         \`evaluator_id\` INT NOT NULL,
+        \`created_at\` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`assignment_id\`),
         INDEX \`fk_team_evaluator_assignments_teams_idx\` (\`team_id\` ASC),
         INDEX \`fk_team_evaluator_assignments_evaluators_idx\` (\`evaluator_id\` ASC),

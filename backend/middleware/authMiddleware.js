@@ -18,6 +18,7 @@ const verifyAdminToken = (req, res, next) => {
         req.user = decoded; // { admin_id, email, iat, exp }
         next();
     } catch (error) {
+        console.error("JWT Verification Error:", error.message);
         return res.status(401).json({
             success: false,
             message: 'Invalid or expired token'

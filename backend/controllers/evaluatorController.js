@@ -40,12 +40,8 @@ exports.registerEvaluator = async (req, res) => {
     // -----------------------------
     // Files
     // -----------------------------
-    const idProofImage = req.files?.id_proof_image?.[0]?.filename;
+    const idProofImage = req.files?.id_proof_image?.[0]?.filename || null;
 
-    if (!idProofImage) {
-      return res.status(400).json({ message: "ID Proof image required" });
-    }
-    
     // -----------------------------
     // Create Evaluator
     // -----------------------------

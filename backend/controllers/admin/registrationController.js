@@ -93,6 +93,10 @@ exports.sendStatusEmail = async (req, res) => {
     }
 
     // 3️⃣ APPROVAL FLOW
+    const password = Math.random().toString(36).slice(-8);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log(`\n🔑 [RESET/CREATE] PASSWORD FOR ${team.email}: ${password}\n`);
 
     // 🔍 Check if login already exists
     const [[existing]] = await db.query(
@@ -100,22 +104,16 @@ exports.sendStatusEmail = async (req, res) => {
       [team.email]
     );
 
-    let password;
-
-    // 🔹 Insert ONLY if not exists
     if (!existing) {
-      password = Math.random().toString(36).slice(-8);
-      const hashedPassword = await bcrypt.hash(password, 10);
-
       await db.query(
         "INSERT INTO user_logins (team_id, email, password) VALUES (?, ?, ?)",
         [teamId, team.email, hashedPassword]
       );
     } else {
-      // If user exists, we don't want to expose the stored password.
-      // We also don't want to resend the password.
-      // We will just send the approval email without credentials.
-      password = "your existing password";
+      await db.query(
+        "UPDATE user_logins SET password = ? WHERE email = ?",
+        [hashedPassword, team.email]
+      );
     }
 
     // 4️⃣ SEND APPROVAL EMAIL
