@@ -11,44 +11,24 @@ export const AdminProvider = ({ children }) => {
 
     // ✅ Persisted admin state
     const [admin, setAdmin] = useState(() => {
-        const savedAdmin = localStorage.getItem("admin");
-        return savedAdmin ? JSON.parse(savedAdmin) : null;
+        const savedAdmin = localStorage.getItem("adminUser");
+        if (!savedAdmin || savedAdmin === "undefined") return null;
+        try {
+            return JSON.parse(savedAdmin);
+        } catch (e) {
+            console.error("Failed to parse adminUser from localStorage", e);
+            return null;
+        }
     });
 
-    // ✅ Persisted token state
-    const [token, setToken] = useState(() => {
-        return localStorage.getItem("adminToken") || null;
-    });
-
-    // 🔁 Sync admin & token with localStorage
+    // 🔁 Sync admin with localStorage
     useEffect(() => {
         if (admin) {
-            localStorage.setItem("admin", JSON.stringify(admin));
+            localStorage.setItem("adminUser", JSON.stringify(admin));
         } else {
-            localStorage.removeItem("admin");
+            localStorage.removeItem("adminUser");
         }
-
-        if (token) {
-            localStorage.setItem("adminToken", token);
-        } else {
-            localStorage.removeItem("adminToken");
-        }
-    }, [admin, token]);
-
-    // 🔐 Login Action
-    const login = (adminData, authToken) => {
-        setAdmin(adminData);
-        setToken(authToken);
-    };
-
-    // 🚪 Logout Action
-    const logout = () => {
-        setAdmin(null);
-        setToken(null);
-        localStorage.removeItem("admin");
-        localStorage.removeItem("adminToken");
-        window.location.href = "/login"; // Force redirect
-    };
+    }, [admin]);
 
     // Registrations data
     const [registrations, setRegistrations] = useState([
@@ -98,9 +78,7 @@ export const AdminProvider = ({ children }) => {
         <AdminContext.Provider
             value={{
                 admin,
-                token,
-                login,
-                logout,
+                setAdmin,
                 registrations,
                 evaluators,
                 updateTeam,

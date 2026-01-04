@@ -1,14 +1,12 @@
 import { Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAdmin } from "../admin/context/AdminContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loginType, setLoginType] = useState("team"); // team | evaluator | admin
-  const { login } = useAdmin();
 
   const navigate = useNavigate();
 
@@ -35,7 +33,7 @@ const Login = () => {
     if (!validateForm()) return;
 
     // 🔁 Switch API based on login type
-    let API_URL = "";
+    let API_URL;
     if (loginType === "team") API_URL = "http://localhost:5001/api/team-login/login";
     else if (loginType === "evaluator") API_URL = "http://localhost:5001/api/evaluators/login";
     else API_URL = "http://localhost:5001/api/admin/login";
@@ -57,18 +55,16 @@ const Login = () => {
       // 🔐 Store separately to avoid clashes
       if (loginType === "team") {
         localStorage.setItem("teamUser", JSON.stringify(data.user));
+        localStorage.setItem("teamToken", data.token); // Add token
         navigate("/dashboard");
       } else if (loginType === "evaluator") {
         localStorage.setItem("evaluatorUser", JSON.stringify(data.user));
+        localStorage.setItem("evaluatorToken", data.token); // Add token
         navigate("/evaluator/evaluator-dashboard");
       } else {
-        // Admin login
-        if (data.success) {
-          login(data.admin, data.token); // Use context action
-          navigate("/admin/dashboard");
-        } else {
-          setError(data.message || "Admin login failed");
-        }
+        localStorage.setItem("adminUser", JSON.stringify(data.admin)); // Use data.admin
+        localStorage.setItem("adminToken", data.token); // Add token
+        navigate("/admin/dashboard");
       }
 
     } catch (err) {
@@ -94,38 +90,38 @@ const Login = () => {
         </div>
 
         {/* 🔀 LOGIN TYPE SWITCH */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-3 mb-6">
           <button
             type="button"
             onClick={() => setLoginType("team")}
-            className={`flex-1 min-w-[100px] py-2.5 rounded-lg font-bold border transition text-xs sm:text-sm ${loginType === "team"
+            className={`w-1/3 py-2.5 rounded-lg font-bold border transition ${loginType === "team"
               ? "bg-[#ef4444] text-white border-[#ef4444]"
               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
               }`}
           >
-            Team Leader
+            Team Leader Login
           </button>
 
           <button
             type="button"
             onClick={() => setLoginType("evaluator")}
-            className={`flex-1 min-w-[100px] py-2.5 rounded-lg font-bold border transition text-xs sm:text-sm ${loginType === "evaluator"
+            className={`w-1/3 py-2.5 rounded-lg font-bold border transition ${loginType === "evaluator"
               ? "bg-[#ef4444] text-white border-[#ef4444]"
               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
               }`}
           >
-            Evaluator
+            Evaluator Login
           </button>
 
           <button
             type="button"
             onClick={() => setLoginType("admin")}
-            className={`flex-1 min-w-[100px] py-2.5 rounded-lg font-bold border transition text-xs sm:text-sm ${loginType === "admin"
+            className={`w-1/3 py-2.5 rounded-lg font-bold border transition ${loginType === "admin"
               ? "bg-[#ef4444] text-white border-[#ef4444]"
               : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
               }`}
           >
-            Admin
+            Admin Login
           </button>
         </div>
 
@@ -180,7 +176,7 @@ const Login = () => {
             type="submit"
             className="w-full bg-[#ef4444] hover:bg-[#dc2626] text-white font-bold py-3 rounded-lg shadow-lg"
           >
-            Enter Dashboard
+            Login
           </button>
         </form>
 

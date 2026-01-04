@@ -12,7 +12,7 @@ export default function EvaluatorEmailModal({ isOpen, evaluator, onClose, onSend
             if (evaluator.status === "Approved") {
                 setSubject("JSCOE Hackathon: Evaluator Application Approved");
                 setMessage(
-                    `Dear ${evaluator.name},
+                    `Dear ${evaluator.name || 'Evaluator'},
 
 We are pleased to inform you that your application to be an evaluator for the JSCOE Innovation Hackathon has been APPROVED.
 
@@ -26,7 +26,7 @@ Hackathon Organizing Committee`
             } else if (evaluator.status === "Rejected") {
                 setSubject("JSCOE Hackathon: Evaluator Application Update");
                 setMessage(
-                    `Dear ${evaluator.name},
+                    `Dear ${evaluator.name || 'Evaluator'},
 
 Thank you for your interest in being an evaluator for the JSCOE Innovation Hackathon.
 
@@ -44,8 +44,12 @@ Hackathon Organizing Committee`
         }
     }, [isOpen, evaluator]);
 
+    if (!isOpen || !evaluator) return null;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!evaluator?.email) return;
+
         await onSend({
             to: evaluator.email,
             subject,
@@ -53,8 +57,6 @@ Hackathon Organizing Committee`
         });
         onClose();
     };
-
-    if (!isOpen || !evaluator) return null;
 
     return (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
@@ -78,7 +80,7 @@ Hackathon Organizing Committee`
                         <label className="block text-sm font-semibold text-gray-700 mb-1">To</label>
                         <input
                             type="text"
-                            value={`${evaluator.name} <${evaluator.email}>`}
+                            value={`${evaluator.name || 'Evaluator'} <${evaluator.email || ''}>`}
                             disabled
                             className="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-500 text-sm"
                         />

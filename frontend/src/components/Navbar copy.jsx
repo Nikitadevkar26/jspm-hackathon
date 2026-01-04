@@ -1,14 +1,14 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import {
-    Menu,
-    X,
-    User,
+    Hash,
     LogOut,
     Mail,
+    Menu,
     Phone,
-    Hash
+    User,
+    X
 } from "lucide-react";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
 
 export default function Navbar() {

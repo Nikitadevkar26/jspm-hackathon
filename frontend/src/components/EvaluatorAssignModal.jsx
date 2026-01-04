@@ -22,20 +22,26 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
       }
     })
       .then(res => res.json())
-      .then(setEvaluators)
-      .catch(() => setError("Failed to load evaluators"));
+      .then(data => setEvaluators(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error("Fetch evaluators error:", err);
+        setError("Failed to load evaluators");
+        setEvaluators([]);
+      });
   }, []);
+
+  if (!team) return null;
 
   /* ============================
      THEME-BASED SUGGESTIONS
   ============================ */
   const suggested = useMemo(
-    () => evaluators.filter(e => e.expertise?.includes(team.theme)),
+    () => (Array.isArray(evaluators) ? evaluators : []).filter(e => e.expertise?.includes(team.theme)),
     [evaluators, team.theme]
   );
 
   const others = useMemo(
-    () => evaluators.filter(e => !e.expertise?.includes(team.theme)),
+    () => (Array.isArray(evaluators) ? evaluators : []).filter(e => !e.expertise?.includes(team.theme)),
     [evaluators, team.theme]
   );
 
@@ -80,7 +86,7 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
         {/* HEADER */}
         <div className="bg-indigo-600 text-white p-4 rounded-t-xl flex justify-between">
           <h3 className="font-bold flex items-center gap-2">
-            <Edit size={18} /> Assign Evaluator — {team.name}
+            <Edit size={18} /> Assign Evaluator — {team.team_name}
           </h3>
           <button onClick={onClose}><XCircle /></button>
         </div>

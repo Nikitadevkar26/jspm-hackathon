@@ -25,25 +25,24 @@ import TeamRegistration from "./pages/TeamRegistration";
 import EvaluatorDashboardLayout from "./evaluator/layout/evaluatorDashboardLayout";
 
 /* =========================
+   ADMIN DASHBOARD
+========================= */
+import Dashboard from "./admin_pages/Dashboard";
+import EvaluatorPage from "./admin_pages/EvaluatorPage";
+import GrievancePage from "./admin_pages/GrievancePage";
+import NoticesPage from "./admin_pages/NoticesPage";
+import Registrations from "./admin_pages/Registrations";
+import SectionHeadPage from "./admin_pages/SectionHeadPage";
+import SectionHeadRegistration from "./admin_pages/SectionHeadRegistration";
+import TeamPage from "./admin_pages/TeamPage";
+import { AdminProvider } from "./context/AdminContext";
+import AdminLayout from "./layouts/AdminLayout";
+
+/* =========================
    COMMON LAYOUT
 ========================= */
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-
-/* =========================
-   ADMIN DASHBOARD
-========================= */
-import RequireAuth from "./admin/components/RequireAuth";
-import { AdminProvider } from "./admin/context/AdminContext";
-import AdminLayout from "./admin/layouts/AdminLayout";
-import AdminDashboard from "./admin/pages/Dashboard";
-import EvaluatorPage from "./admin/pages/EvaluatorPage";
-import GrievancePage from "./admin/pages/GrievancePage";
-import NoticesPage from "./admin/pages/NoticesPage";
-import Registrations from "./admin/pages/Registrations";
-import SectionHeadPage from "./admin/pages/SectionHeadPage";
-import SectionHeadRegistration from "./admin/pages/SectionHeadRegistration";
-import TeamPage from "./admin/pages/TeamPage";
 
 /* =========================
    TEAM LEADER DASHBOARD
@@ -101,11 +100,11 @@ const Layout = () => {
 
           {/* ================= ADMIN DASHBOARD ================= */}
           <Route path="/admin" element={
-            <RequireAuth>
+            <AdminProvider>
               <AdminLayout />
-            </RequireAuth>
+            </AdminProvider>
           }>
-            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="view-team-registrations" element={<Registrations />} />
             <Route path="approved-teams" element={<TeamPage />} />
             <Route path="view-all-evaluator" element={<EvaluatorPage />} />
@@ -131,10 +130,8 @@ const Layout = () => {
 ========================= */
 export default function App() {
   return (
-    <AdminProvider>
-      <Router>
-        <Layout />
-      </Router>
-    </AdminProvider>
+    <Router>
+      <Layout />
+    </Router>
   );
 }
