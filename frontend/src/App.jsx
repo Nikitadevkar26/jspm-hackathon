@@ -1,24 +1,23 @@
-import React from "react";
 import {
+  Navigate,
+  Route,
   BrowserRouter as Router,
   Routes,
-  Route,
-  Navigate,
   useLocation
 } from "react-router-dom";
 
 /* =========================
    PUBLIC PAGES
 ========================= */
-import HackathonDashboard from "./pages/HackathonDashboard";
 import Login from "./components/Login";
-import TeamRegistration from "./pages/TeamRegistration";
-import EvaluatorRegistration from "./pages/EvaluatorRegistration";
-import EvaluatorApp from "./pages/EvaluatorApp";
-import Faqs from "./pages/Faqs";
-import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import EvaluatorApp from "./pages/EvaluatorApp";
+import EvaluatorRegistration from "./pages/EvaluatorRegistration";
+import Faqs from "./pages/Faqs";
 import Guidelines from "./pages/Guidelines";
+import HackathonDashboard from "./pages/HackathonDashboard";
+import TeamRegistration from "./pages/TeamRegistration";
 
 /* =========================
    EVALUATOR DASHBOARD
@@ -28,15 +27,30 @@ import EvaluatorDashboardLayout from "./evaluator/layout/evaluatorDashboardLayou
 /* =========================
    COMMON LAYOUT
 ========================= */
-import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+
+/* =========================
+   ADMIN DASHBOARD
+========================= */
+import RequireAuth from "./admin/components/RequireAuth";
+import { AdminProvider } from "./admin/context/AdminContext";
+import AdminLayout from "./admin/layouts/AdminLayout";
+import AdminDashboard from "./admin/pages/Dashboard";
+import EvaluatorPage from "./admin/pages/EvaluatorPage";
+import GrievancePage from "./admin/pages/GrievancePage";
+import NoticesPage from "./admin/pages/NoticesPage";
+import Registrations from "./admin/pages/Registrations";
+import SectionHeadPage from "./admin/pages/SectionHeadPage";
+import SectionHeadRegistration from "./admin/pages/SectionHeadRegistration";
+import TeamPage from "./admin/pages/TeamPage";
 
 /* =========================
    TEAM LEADER DASHBOARD
 ========================= */
-import TeamLeaderDashboard from "./pages/dashboard/TeamLeaderDashboard";
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import IdeaSubmission from "./pages/dashboard/IdeaSubmission";
+import TeamLeaderDashboard from "./pages/dashboard/TeamLeaderDashboard";
 import TeamProfile from "./pages/dashboard/TeamProfile";
 
 /* =========================
@@ -48,7 +62,8 @@ const Layout = () => {
   // Hide Navbar & Footer on dashboard routes
   const hideLayout =
     location.pathname.startsWith("/dashboard") ||
-    location.pathname.startsWith("/evaluator");
+    location.pathname.startsWith("/evaluator") ||
+    location.pathname.startsWith("/admin");
 
   return (
     <div className="flex flex-col min-h-screen bg-[#f8f9fa]">
@@ -84,6 +99,22 @@ const Layout = () => {
             element={<EvaluatorDashboardLayout />}
           />
 
+          {/* ================= ADMIN DASHBOARD ================= */}
+          <Route path="/admin" element={
+            <RequireAuth>
+              <AdminLayout />
+            </RequireAuth>
+          }>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="view-team-registrations" element={<Registrations />} />
+            <Route path="approved-teams" element={<TeamPage />} />
+            <Route path="view-all-evaluator" element={<EvaluatorPage />} />
+            <Route path="section-head" element={<SectionHeadPage />} />
+            <Route path="section-head-register" element={<SectionHeadRegistration />} />
+            <Route path="grievance" element={<GrievancePage />} />
+            <Route path="notices" element={<NoticesPage />} />
+          </Route>
+
           {/* ================= FALLBACK ================= */}
           <Route path="*" element={<Navigate to="/" replace />} />
 
@@ -100,8 +131,10 @@ const Layout = () => {
 ========================= */
 export default function App() {
   return (
-    <Router>
-      <Layout />
-    </Router>
+    <AdminProvider>
+      <Router>
+        <Layout />
+      </Router>
+    </AdminProvider>
   );
 }

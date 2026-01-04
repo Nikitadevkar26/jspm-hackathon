@@ -1,5 +1,7 @@
 const AdminModel = require('../models/adminAuthModel');
 const db = require('../config/db');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 /* ---------------- GET ALL ADMINS ---------------- */
 exports.getAllAdmins = async (req, res) => {
@@ -43,17 +45,27 @@ exports.loginAdmin = async (req, res) => {
       });
     }
 
-    // 🔥 FIX: Convert DB password to string before comparing
-    if (String(admin.password) !== String(password)) {
+    // Verify password
+    const isMatch = await bcrypt.compare(password, admin.password);
+
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
       });
     }
 
+    // Generate JWT Token
+    const token = jwt.sign(
+      { id: admin.admin_id, email: admin.email, role: 'admin' },
+      process.env.JWT_SECRET || 'fallback_secret_key',
+      { expiresIn: '24h' }
+    );
+
     return res.status(200).json({
       success: true,
       message: 'Login successful',
+      token, // Send token to frontend
       admin: {
         admin_id: admin.admin_id,
         name: admin.name,

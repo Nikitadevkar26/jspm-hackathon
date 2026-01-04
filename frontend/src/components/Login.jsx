@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Lock, Mail } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAdmin } from "../admin/context/AdminContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loginType, setLoginType] = useState("team"); // team | evaluator
+  const [loginType, setLoginType] = useState("team"); // team | evaluator | admin
+  const { login } = useAdmin();
 
   const navigate = useNavigate();
 
@@ -33,10 +35,10 @@ const Login = () => {
     if (!validateForm()) return;
 
     // 🔁 Switch API based on login type
-    const API_URL =
-      loginType === "team"
-        ? "http://localhost:5001/api/team-login/login"
-        : "http://localhost:5001/api/evaluators/login";
+    let API_URL = "";
+    if (loginType === "team") API_URL = "http://localhost:5001/api/team-login/login";
+    else if (loginType === "evaluator") API_URL = "http://localhost:5001/api/evaluators/login";
+    else API_URL = "http://localhost:5001/api/admin/login";
 
     try {
       const response = await fetch(API_URL, {
@@ -56,9 +58,17 @@ const Login = () => {
       if (loginType === "team") {
         localStorage.setItem("teamUser", JSON.stringify(data.user));
         navigate("/dashboard");
-      } else {
+      } else if (loginType === "evaluator") {
         localStorage.setItem("evaluatorUser", JSON.stringify(data.user));
         navigate("/evaluator/evaluator-dashboard");
+      } else {
+        // Admin login
+        if (data.success) {
+          login(data.admin, data.token); // Use context action
+          navigate("/admin/dashboard");
+        } else {
+          setError(data.message || "Admin login failed");
+        }
       }
 
     } catch (err) {
@@ -84,29 +94,38 @@ const Login = () => {
         </div>
 
         {/* 🔀 LOGIN TYPE SWITCH */}
-        <div className="flex gap-3 mb-6">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
           <button
             type="button"
             onClick={() => setLoginType("team")}
-            className={`w-1/2 py-2.5 rounded-lg font-bold border transition ${
-              loginType === "team"
-                ? "bg-[#ef4444] text-white border-[#ef4444]"
-                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-            }`}
+            className={`flex-1 min-w-[100px] py-2.5 rounded-lg font-bold border transition text-xs sm:text-sm ${loginType === "team"
+              ? "bg-[#ef4444] text-white border-[#ef4444]"
+              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+              }`}
           >
-            Team Leader Login
+            Team Leader
           </button>
 
           <button
             type="button"
             onClick={() => setLoginType("evaluator")}
-            className={`w-1/2 py-2.5 rounded-lg font-bold border transition ${
-              loginType === "evaluator"
-                ? "bg-[#ef4444] text-white border-[#ef4444]"
-                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-            }`}
+            className={`flex-1 min-w-[100px] py-2.5 rounded-lg font-bold border transition text-xs sm:text-sm ${loginType === "evaluator"
+              ? "bg-[#ef4444] text-white border-[#ef4444]"
+              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+              }`}
           >
-            Evaluator Login
+            Evaluator
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setLoginType("admin")}
+            className={`flex-1 min-w-[100px] py-2.5 rounded-lg font-bold border transition text-xs sm:text-sm ${loginType === "admin"
+              ? "bg-[#ef4444] text-white border-[#ef4444]"
+              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+              }`}
+          >
+            Admin
           </button>
         </div>
 
