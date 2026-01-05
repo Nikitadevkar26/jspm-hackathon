@@ -7,6 +7,7 @@ import {
     Menu,
     TriangleAlert,
     Users,
+    BookAIcon,
     X
 } from "lucide-react";
 import { useState } from "react";
@@ -33,6 +34,7 @@ export default function Sidebar() {
         { name: "Dashboard", path: "/admin/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
         { name: "Teams Registration", path: "/admin/view-team-registrations", icon: <FileText className="w-5 h-5" /> },
         { name: "Teams", path: "/admin/approved-teams", icon: <Users className="w-5 h-5" /> },
+        { name: "Teams Idea Submission", path: "/admin/team-idea-submission", icon: <BookAIcon className="w-5 h-5" /> },
         { name: "Evaluator Registration", path: "/admin/view-all-evaluator", icon: <Users className="w-5 h-5" /> },
         { name: "Evaluator Assignment", path: "/admin/section-head", icon: <Users className="w-5 h-5" /> },
         { name: "SH Registration", path: "/admin/section-head-register", icon: <Users className="w-5 h-5" /> },

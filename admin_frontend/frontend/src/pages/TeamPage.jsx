@@ -65,8 +65,8 @@ export default function Teams() {
             className="px-4 py-2 border rounded-xl text-sm font-semibold"
           >
             <option value="All">All Status</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
             <option value="Pending">Pending</option>
           </select>
         </div>

@@ -37,6 +37,7 @@ import SectionHeadRegistration from "./admin_pages/SectionHeadRegistration";
 import TeamPage from "./admin_pages/TeamPage";
 import { AdminProvider } from "./context/AdminContext";
 import AdminLayout from "./layouts/AdminLayout";
+import ViewTeamIS from "./admin_pages/ViewTeamIS";
 
 /* =========================
    COMMON LAYOUT
@@ -106,6 +107,7 @@ const Layout = () => {
           }>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="view-team-registrations" element={<Registrations />} />
+            <Route path="team-idea-submission" element={<ViewTeamIS />} />
             <Route path="approved-teams" element={<TeamPage />} />
             <Route path="view-all-evaluator" element={<EvaluatorPage />} />
             <Route path="section-head" element={<SectionHeadPage />} />

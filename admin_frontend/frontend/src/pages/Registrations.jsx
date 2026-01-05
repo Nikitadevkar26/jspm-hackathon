@@ -64,7 +64,7 @@ export default function Registrations() {
 
             setNotification({
                 msg: `Team ${status.toUpperCase()}`,
-                type: status === "approved" ? "success" : "error"
+                type: status === "Approved" ? "success" : "error"
             });
 
             setTimeout(() => setNotification(null), 3000);
@@ -87,8 +87,8 @@ export default function Registrations() {
             {notification && (
                 <div
                     className={`p-4 mb-4 rounded flex items-center gap-2 ${notification.type === "success"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
                         }`}
                 >
                     <AlertCircle size={18} />
@@ -152,7 +152,7 @@ export default function Registrations() {
                                                         onClick={() =>
                                                             updateStatus(
                                                                 team.team_id,
-                                                                "approved"
+                                                                "Approved"
                                                             )
                                                         }
                                                         className="bg-green-600 text-white px-3 py-1 rounded text-xs flex items-center gap-1"
@@ -164,7 +164,7 @@ export default function Registrations() {
                                                         onClick={() =>
                                                             updateStatus(
                                                                 team.team_id,
-                                                                "rejected"
+                                                                "Rejected"
                                                             )
                                                         }
                                                         className="bg-red-600 text-white px-3 py-1 rounded text-xs flex items-center gap-1"
