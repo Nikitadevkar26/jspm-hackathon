@@ -20,14 +20,14 @@ export default function Navbar() {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     const navLinks = [
-        { name: "Dashboard", path: "/dashboard" },
-        { name: "Teams Registration", path: "/registrations" },
-        { name: "Teams", path: "/teams" },
-        { name: "Evaluator Registration", path: "/evaluator" },
-        { name: "Evaluator Assignment", path: "/section-head" },
-        { name: "Section Head Register", path: "/section-head-register" },
-        { name: "Grievance", path: "/grievance" },
-        { name: "Notices", path: "/notices" }
+        { name: "Dashboard", path: "/admin/dashboard" },
+        { name: "Teams Registration", path: "/admin/view-team-registrations" },
+        { name: "Teams", path: "/admin/approved-teams" },
+        { name: "Evaluator Registration", path: "/admin/view-all-evaluator" },
+        { name: "Evaluator Assignment", path: "/admin/section-head" },
+        { name: "Section Head Register", path: "/admin/section-head-register" },
+        { name: "Grievance", path: "/admin/grievance" },
+        { name: "Notices", path: "/admin/notices" }
     ];
 
     const handleLogout = () => {

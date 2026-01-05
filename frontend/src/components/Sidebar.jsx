@@ -55,8 +55,7 @@ export default function Sidebar() {
                 className={`${isOpen ? "translate-x-0" : "-translate-x-full"
                     } md:translate-x-0 transform fixed 
                 top-24
-                left-0 w-64 bg-gray-900 text-white shadow-lg transition-transform duration-200 z-40`}
-                style={{ height: 'calc(100% - 6rem)' }}
+                left-0 w-64 bg-gray-900 text-white shadow-lg transition-transform duration-200 z-40 h-[calc(100%-6rem)]`}
             >
                 <nav className="mt-4">
                     <ul className="space-y-2 px-3">
