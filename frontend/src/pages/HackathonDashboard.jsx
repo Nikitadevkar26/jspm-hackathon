@@ -184,7 +184,7 @@ const Carousel = ({ items, imageSource }) => {
                     // Each slide takes the full width of the container (100%)
                     <div
                         key={i}
-                        className="w-full flex-shrink-0" 
+                        className="w-full flex-shrink-0"
                         style={{ minWidth: '100%' }}
                     >
                         <div className="p-4 bg-white">
@@ -192,17 +192,17 @@ const Carousel = ({ items, imageSource }) => {
                             <div className="w-full h-[300px] rounded-lg overflow-hidden border-2 border-red-300 flex items-center justify-center">
                                 {i === 0 && imageSource ? (
                                     // Use the actual image for the first slide (object-contain)
-                                    <img 
-                                        src={imageSource} 
-                                        alt={item.title} 
-                                        className="w-full h-full object-contain bg-white p-2" 
+                                    <img
+                                        src={imageSource}
+                                        alt={item.title}
+                                        className="w-full h-full object-contain bg-white p-2"
                                     />
                                 ) : (
                                     // Use object-contain for all other slides as well
-                                    <img 
-                                        src={item.url} 
-                                        alt={item.title} 
-                                        className="w-full h-full object-contain bg-white p-2" 
+                                    <img
+                                        src={item.url}
+                                        alt={item.title}
+                                        className="w-full h-full object-contain bg-white p-2"
                                     />
                                 )}
                             </div>
@@ -217,9 +217,8 @@ const Carousel = ({ items, imageSource }) => {
                     <button
                         key={index}
                         onClick={() => setActiveIndex(index)}
-                        className={`w-3 h-3 rounded-full transition-all ${
-                            activeIndex === index ? 'bg-red-600 scale-110' : 'bg-gray-300 hover:bg-red-300'
-                        }`}
+                        className={`w-3 h-3 rounded-full transition-all ${activeIndex === index ? 'bg-red-600 scale-110' : 'bg-gray-300 hover:bg-red-300'
+                            }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
                 ))}
@@ -260,9 +259,9 @@ const DistanceSection = ({ routes }) => (
         <div className="mt-6">
             <strong className="block mb-2 text-lg text-gray-800">Map Visualization:</strong>
             <p className="text-gray-700">
-                The map below shows the driving route from 
-                <strong>Shivajinagar Bus Stand, Pune</strong> and 
-                <strong>Swargate, Pune</strong> to 
+                The map below shows the driving route from
+                <strong>Shivajinagar Bus Stand, Pune</strong> and
+                <strong>Swargate, Pune</strong> to
                 <strong>JSPM Group Of Institutes, Hadapsar</strong>.
             </p>
         </div>
@@ -320,14 +319,14 @@ const ContactUsSection = () => (
 
 
 const HackathonDashboard = () => {
-    
+
     return (
         <div className="bg-gray-50 min-h-screen font-sans">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Left Section (Main Content) */}
                     <div className="w-full lg:w-3/4">
-                        
+
                         {/* Flyer Carousel Section */}
                         <section className="mb-10 bg-white p-6 rounded-lg shadow-xl border-t-4 border-red-700">
                             <h2 className="text-2xl font-bold text-red-700 mb-4 border-b pb-2">
@@ -403,9 +402,9 @@ const HackathonDashboard = () => {
                                 })}
                             </div>
 
-                            
+
                         </section>
-                        
+
                         {/* Distance Information */}
                         <DistanceSection routes={routeData} />
 
@@ -418,7 +417,7 @@ const HackathonDashboard = () => {
                         <NoticeAndAnnouncements events={mockEvents} />
                     </div>
                 </div>
-            </main> 
+            </main>
         </div>
     );
 };

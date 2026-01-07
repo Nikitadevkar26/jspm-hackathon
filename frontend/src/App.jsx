@@ -32,7 +32,7 @@ import EvaluatorPage from "./admin_pages/EvaluatorPage";
 import GrievancePage from "./admin_pages/GrievancePage";
 import NoticesPage from "./admin_pages/NoticesPage";
 import ViewTeamRegistrations from "./admin_pages/ViewTeamRegistrations";
-import SectionHeadPage from "./admin_pages/SectionHeadPage";
+import EvaluatorTeamAssignPage from "./admin_pages/EvaluatorTeamAssignPage.jsx";
 import SectionHeadRegistration from "./admin_pages/SectionHeadRegistration";
 import TeamPage from "./admin_pages/TeamPage";
 import { AdminProvider } from "./context/AdminContext";
@@ -109,7 +109,7 @@ const Layout = () => {
             <Route path="team-idea-submission" element={<ViewTeamIS />} />
             <Route path="approved-teams" element={<TeamPage />} />
             <Route path="view-all-evaluator" element={<EvaluatorPage />} />
-            <Route path="section-head" element={<SectionHeadPage />} />
+            <Route path="section-head" element={<EvaluatorTeamAssignPage />} />
             <Route path="section-head-register" element={<SectionHeadRegistration />} />
             <Route path="grievance" element={<GrievancePage />} />
             <Route path="notices" element={<NoticesPage />} />

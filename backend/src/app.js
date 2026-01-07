@@ -63,7 +63,7 @@ app.use("/api/team-details", teamDetailRoutes);
 // admin 
 app.use("/api/admin", adminLoginRoutes);
 app.use("/api/registrations", registrationRoutes);
-app.use("/api/evaluators", evaluatorAdminRoutes);
+app.use("/api/admin/evaluators", evaluatorAdminRoutes);
 app.use("/api/assignments", assignmentRoutes);
 
 // evaluator
