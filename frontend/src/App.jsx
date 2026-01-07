@@ -27,7 +27,7 @@ import EvaluatorDashboardLayout from "../src/evaluator/layout/EvaluatorDashboard
 /* =========================
    ADMIN DASHBOARD
 ========================= */
-import Dashboard from "./admin_pages/Dashboard";
+import Dashboard from "./admin_pages/AdminLiveDashboard.jsx";
 import EvaluatorPage from "./admin_pages/EvaluatorPage";
 import GrievancePage from "./admin_pages/GrievancePage";
 import NoticesPage from "./admin_pages/NoticesPage";

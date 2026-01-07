@@ -25,7 +25,7 @@ export default function EvaluatorPage() {
       const token = localStorage.getItem("adminToken");
 
       const { data } = await axios.get(
-        "http://localhost:8088/api/evaluators",
+        "http://localhost:8088/api/admin/evaluators",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ export default function EvaluatorPage() {
       const token = localStorage.getItem("adminToken");
 
       await axios.put(
-        `http://localhost:8088/api/evaluators/${id}/status`,
+        `http://localhost:8088/api/admin/evaluators/${id}/status`,
         { status },
         {
           headers: {
@@ -92,7 +92,7 @@ export default function EvaluatorPage() {
       const token = localStorage.getItem("adminToken");
 
       await axios.post(
-        `http://localhost:8088/api/evaluators/${selectedEvaluator.evaluator_id}/send-email`,
+        `http://localhost:8088/api/admin/evaluators/${selectedEvaluator.evaluator_id}/send-email`,
         payload,
         {
           headers: {

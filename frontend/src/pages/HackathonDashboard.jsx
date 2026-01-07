@@ -46,7 +46,7 @@ const themeColors = [
 
 // Note: Ensure your first flyer entry corresponds to your image
 const mockFlyers = [
-    { title: 'Hackathon 2025 Grand Flyer', url: HACKATHON_FLYER_IMAGE },
+    { title: 'Innovation Challenge 2025 Grand Flyer', url: HACKATHON_FLYER_IMAGE },
     { title: 'Flyer 2', url: Flyer2 }, // Uses the new constant
     { title: "Flyer 3", url: Flyer3 },
 ];
@@ -292,10 +292,10 @@ const ContactUsSection = () => (
             </div>
             <div className="flex-1 bg-red-50 border border-red-300 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-red-900 border-b border-red-300 pb-2 mb-3">
-                    Hackathon Support / Admissions
+                    Innovation Challenge Support / Admissions
                 </h3>
                 <p className="text-gray-700">
-                    For Hackathon technical queries or Admission related questions:
+                    For Innovation Challenge technical queries or Admission related questions:
                 </p>
                 <p className="text-gray-700">
                     <strong>Admission Contact:</strong> +91 9890570405
@@ -338,10 +338,10 @@ const HackathonDashboard = () => {
                         <section className="flex flex-col lg:flex-row gap-8 mb-10">
                             <div className="w-full lg:w-2/3 bg-white rounded-lg shadow-md p-6 border border-gray-200">
                                 <h2 className="text-2xl font-bold text-red-600 border-b-2 border-red-400 pb-2 mb-4">
-                                    What is the Hackathon?
+                                    What is the Innovation Challenge?
                                 </h2>
                                 <p className="text-gray-700 leading-relaxed mb-4">
-                                    This Hackathon is a premier nationwide initiative designed to
+                                    This Innovation Challenge is a premier nationwide initiative designed to
                                     engage students in solving some of the most pressing
                                     challenges faced in everyday life. Launched to foster a
                                     culture of innovation and practical problem-solving, it
@@ -377,7 +377,7 @@ const HackathonDashboard = () => {
                         {/* THEMES SECTION - Reverted to color-coded cards */}
                         <section className="bg-white p-6 rounded-lg shadow-md mb-10">
                             <h2 className="text-2xl font-bold text-center text-red-600 mb-6">
-                                Hackathon Themes 💡
+                                Innovation Challenge Themes 💡
                             </h2>
                             <div className="flex overflow-x-auto gap-6 pb-6 custom-scrollbar">
                                 {mockThemes.map((theme, i) => {

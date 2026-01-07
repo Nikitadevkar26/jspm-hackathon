@@ -22,13 +22,13 @@ const Navbar = () => {
           alt="JSPM JSCOE Logo"
           className="h-10 w-10 mr-4 rounded-full border-2 border-white object-cover"
         />
-        Hackathon 2025
+        Innovation Challenge 2026
       </div>
 
       {/* Navigation Links */}
       <ul className="flex space-x-4">
         <li><Link to="/" className="nav-link">Home</Link></li>
-        <li><Link to="/about" className="nav-link">About Hackathon</Link></li>
+        <li><Link to="/about" className="nav-link">About Innovation Challenge</Link></li>
         <li><Link to="/guidelines" className="nav-link">Guidelines</Link></li>
         <li><Link to="/evaluatorapp" className="nav-link">Evaluator</Link></li>
         <li><Link to="/faqs" className="nav-link">FAQs</Link></li>
