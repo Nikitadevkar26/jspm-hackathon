@@ -9,7 +9,7 @@ import {
 /* =========================
    PUBLIC PAGES
 ========================= */
-import Login from "./components/Login";
+import Login from "./components/Login.jsx";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import EvaluatorApp from "./pages/EvaluatorApp";
@@ -22,7 +22,7 @@ import TeamRegistration from "./pages/TeamRegistration";
 /* =========================
    EVALUATOR DASHBOARD
 ========================= */
-import EvaluatorDashboardLayout from "./evaluator/layout/evaluatorDashboardLayout";
+import EvaluatorDashboardLayout from "../src/evaluator/layout/EvaluatorDashboardLayout";
 
 /* =========================
    ADMIN DASHBOARD
@@ -31,12 +31,12 @@ import Dashboard from "./admin_pages/Dashboard";
 import EvaluatorPage from "./admin_pages/EvaluatorPage";
 import GrievancePage from "./admin_pages/GrievancePage";
 import NoticesPage from "./admin_pages/NoticesPage";
-import Registrations from "./admin_pages/Registrations";
+import ViewTeamRegistrations from "./admin_pages/ViewTeamRegistrations";
 import SectionHeadPage from "./admin_pages/SectionHeadPage";
 import SectionHeadRegistration from "./admin_pages/SectionHeadRegistration";
 import TeamPage from "./admin_pages/TeamPage";
 import { AdminProvider } from "./context/AdminContext";
-import AdminLayout from "./layouts/AdminLayout";
+import AdminLayout from "./admin_pages/adminLayouts/AdminLayout";
 import ViewTeamIS from "./admin_pages/ViewTeamIS";
 
 /* =========================
@@ -52,6 +52,7 @@ import DashboardHome from "./pages/dashboard/DashboardHome";
 import IdeaSubmission from "./pages/dashboard/IdeaSubmission";
 import TeamLeaderDashboard from "./pages/dashboard/TeamLeaderDashboard";
 import TeamProfile from "./pages/dashboard/TeamProfile";
+import SetPassword from "./components/teamLeaderdashboard/SetPassword";
 
 /* =========================
    GLOBAL LAYOUT
@@ -76,10 +77,7 @@ const Layout = () => {
           <Route path="/" element={<HackathonDashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/teamRegistration" element={<TeamRegistration />} />
-          <Route
-            path="/evaluatorRegistration"
-            element={<EvaluatorRegistration />}
-          />
+          <Route path="/evaluatorRegistration" element={<EvaluatorRegistration />} />
           <Route path="/evaluatorapp" element={<EvaluatorApp />} />
           <Route path="/faqs" element={<Faqs />} />
           <Route path="/contact" element={<ContactUs />} />
@@ -90,6 +88,7 @@ const Layout = () => {
           <Route path="/dashboard" element={<TeamLeaderDashboard />}>
             <Route index element={<DashboardHome />} />
             <Route path="idea-submission" element={<IdeaSubmission />} />
+            <Route path="reset-password" element={<SetPassword />} />
             <Route path="profile" element={<TeamProfile />} />
           </Route>
 
@@ -106,7 +105,7 @@ const Layout = () => {
             </AdminProvider>
           }>
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="view-team-registrations" element={<Registrations />} />
+            <Route path="view-team-registrations" element={<ViewTeamRegistrations />} />
             <Route path="team-idea-submission" element={<ViewTeamIS />} />
             <Route path="approved-teams" element={<TeamPage />} />
             <Route path="view-all-evaluator" element={<EvaluatorPage />} />

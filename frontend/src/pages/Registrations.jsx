@@ -17,20 +17,48 @@ export default function Registrations() {
     const [notification, setNotification] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // /* ✅ FETCH TEAMS */
+    // useEffect(() => {
+    //     const fetchTeams = async () => {
+    //         try {
+    //             const token = localStorage.getItem("adminToken");
+    //             const res = await fetch("http://localhost:8088/api/registrations", {
+    //                 headers: {
+    //                     "Authorization": token ? `Bearer ${token}` : ""
+    //                 }
+    //             });
+    //             if (!res.ok) throw new Error("Failed to fetch teams");
+
+    //             const data = await res.json();
+    //             setTeams(data);
+    //         } catch (error) {
+    //             console.error("Fetch error:", error);
+    //             setNotification({
+    //                 msg: "Failed to load registrations",
+    //                 type: "error"
+    //             });
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchTeams();
+    // }, []);
+
     /* ✅ FETCH TEAMS */
     useEffect(() => {
         const fetchTeams = async () => {
             try {
                 const token = localStorage.getItem("adminToken");
-                const res = await fetch("http://localhost:5001/api/registrations", {
+                const res = await axios.get("http://localhost:8088/api/registrations", {
                     headers: {
                         "Authorization": token ? `Bearer ${token}` : ""
                     }
                 });
-                if (!res.ok) throw new Error("Failed to fetch teams");
 
-                const data = await res.json();
+                const data = res.data;
                 setTeams(data);
+
             } catch (error) {
                 console.error("Fetch error:", error);
                 setNotification({
@@ -45,11 +73,12 @@ export default function Registrations() {
         fetchTeams();
     }, []);
 
+
     /* ✅ UPDATE STATUS */
     const updateStatus = async (teamId, status) => {
         try {
             const res = await fetch(
-                `http://localhost:5001/api/registrations/${teamId}/status`,
+                `http://localhost:8088/api/registrations/${teamId}/status`,
                 {
                     method: "PUT",
                     headers: {
@@ -186,7 +215,7 @@ export default function Registrations() {
                                                 <button
                                                     onClick={async () => {
                                                         await fetch(
-                                                            `http://localhost:5001/api/registrations/${team.team_id}/send-email`,
+                                                            `http://localhost:8088/api/registrations/${team.team_id}/send-email`,
                                                             {
                                                                 method: "POST",
                                                                 headers: {

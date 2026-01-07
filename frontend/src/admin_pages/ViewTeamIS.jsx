@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const STATUS_COLORS = {
   SUBMITTED: "bg-blue-100 text-blue-700",
   UNDER_REVIEW: "bg-yellow-100 text-yellow-700",
   APPROVED: "bg-green-100 text-green-700",
-  REJECTED: "bg-red-100 text-red-700"
+  REJECTED: "bg-red-100 text-red-700",
 };
 
 export default function ViewTeamIS() {
@@ -15,16 +16,29 @@ export default function ViewTeamIS() {
   const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5001/api/admin-view-idea-submission")
-      .then(res => res.json())
-      .then(data => {
-        setIdeas(data);
-        setLoading(false);
-      })
-      .catch(err => {
+    const fetchIdeas = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+
+        const { data } = await axios.get(
+          "http://localhost:8088/api/admin-view-idea-submission",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setIdeas(Array.isArray(data) ? data : []);
+      } catch (err) {
         console.error("Fetch Error:", err);
+        setIdeas([]);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchIdeas();
   }, []);
 
   if (loading) {
@@ -51,7 +65,7 @@ export default function ViewTeamIS() {
           </thead>
 
           <tbody>
-            {ideas.map(idea => (
+            {ideas.map((idea) => (
               <React.Fragment key={idea.id}>
                 <tr className="border-t">
                   <td className="p-3">{idea.team_name}</td>
@@ -74,7 +88,9 @@ export default function ViewTeamIS() {
                   <td className="p-3">
                     <button
                       onClick={() =>
-                        setExpandedId(expandedId === idea.id ? null : idea.id)
+                        setExpandedId(
+                          expandedId === idea.id ? null : idea.id
+                        )
                       }
                       className="text-blue-600 font-semibold hover:underline"
                     >
@@ -87,7 +103,8 @@ export default function ViewTeamIS() {
                   <tr className="bg-gray-50 border-t">
                     <td colSpan="6" className="p-4 space-y-3 text-sm">
                       <p>
-                        <strong>Description:</strong><br />
+                        <strong>Description:</strong>
+                        <br />
                         {idea.description}
                       </p>
 

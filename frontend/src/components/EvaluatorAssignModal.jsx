@@ -2,8 +2,9 @@
 
 import { Edit, List, Send, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 
-const BASE_URL = "http://localhost:5001/api";
+const BASE_URL = "http://localhost:8088/api";
 
 export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
   const [evaluators, setEvaluators] = useState([]);
@@ -15,19 +16,28 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
      FETCH APPROVED EVALUATORS
   ============================ */
   useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    fetch(`${BASE_URL}/evaluators?status=Approved`, {
-      headers: {
-        "Authorization": token ? `Bearer ${token}` : ""
-      }
-    })
-      .then(res => res.json())
-      .then(data => setEvaluators(Array.isArray(data) ? data : []))
-      .catch((err) => {
+    const fetchEvaluators = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+
+        const { data } = await axios.get(
+          `${BASE_URL}/evaluators?status=Approved`,
+          {
+            headers: {
+              Authorization: token ? `Bearer ${token}` : "",
+            },
+          }
+        );
+
+        setEvaluators(Array.isArray(data) ? data : []);
+      } catch (err) {
         console.error("Fetch evaluators error:", err);
         setError("Failed to load evaluators");
         setEvaluators([]);
-      });
+      }
+    };
+
+    fetchEvaluators();
   }, []);
 
   if (!team) return null;
@@ -36,12 +46,18 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
      THEME-BASED SUGGESTIONS
   ============================ */
   const suggested = useMemo(
-    () => (Array.isArray(evaluators) ? evaluators : []).filter(e => e.expertise?.includes(team.theme)),
+    () =>
+      (Array.isArray(evaluators) ? evaluators : []).filter((e) =>
+        e.expertise?.includes(team.theme)
+      ),
     [evaluators, team.theme]
   );
 
   const others = useMemo(
-    () => (Array.isArray(evaluators) ? evaluators : []).filter(e => !e.expertise?.includes(team.theme)),
+    () =>
+      (Array.isArray(evaluators) ? evaluators : []).filter(
+        (e) => !e.expertise?.includes(team.theme)
+      ),
     [evaluators, team.theme]
   );
 
@@ -53,27 +69,28 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
       setLoading(true);
       setError("");
 
-      const res = await fetch(`${BASE_URL}/assignments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": localStorage.getItem("adminToken") ? `Bearer ${localStorage.getItem("adminToken")}` : ""
-        },
-        body: JSON.stringify({
-          team_id: team.team_id,
-          evaluator_id: selectedEvaluator
-        })
-      });
+      const token = localStorage.getItem("adminToken");
 
-      if (!res.ok) {
-        throw new Error("Assignment failed");
-      }
+      await axios.post(
+        `${BASE_URL}/assignments`,
+        {
+          team_id: team.team_id,
+          evaluator_id: selectedEvaluator,
+        },
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
+      );
 
       onSuccess(); // refresh teams
       onClose();   // close modal
     } catch (err) {
-      console.error(err);
-      setError("Failed to assign evaluator.");
+      console.error("Assignment error:", err);
+      setError(
+        err.response?.data?.message || "Failed to assign evaluator."
+      );
     } finally {
       setLoading(false);
     }
@@ -88,7 +105,9 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
           <h3 className="font-bold flex items-center gap-2">
             <Edit size={18} /> Assign Evaluator — {team.team_name}
           </h3>
-          <button onClick={onClose}><XCircle /></button>
+          <button onClick={onClose}>
+            <XCircle />
+          </button>
         </div>
 
         {/* BODY */}
@@ -100,7 +119,8 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
           )}
 
           <p className="text-sm text-gray-600">
-            Project: <b>{team.project_title}</b> (Theme: <b>{team.theme}</b>)
+            Project: <b>{team.project_title}</b> (Theme:{" "}
+            <b>{team.theme}</b>)
           </p>
 
           <label className="text-sm font-semibold flex items-center gap-1">
@@ -116,8 +136,11 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
 
             {suggested.length > 0 && (
               <optgroup label={`Suggested Experts for ${team.theme}`}>
-                {suggested.map(ev => (
-                  <option key={ev.evaluator_id} value={ev.evaluator_id}>
+                {suggested.map((ev) => (
+                  <option
+                    key={ev.evaluator_id}
+                    value={ev.evaluator_id}
+                  >
                     {ev.name} (Expert)
                   </option>
                 ))}
@@ -126,8 +149,11 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
 
             {others.length > 0 && (
               <optgroup label="Other Evaluators">
-                {others.map(ev => (
-                  <option key={ev.evaluator_id} value={ev.evaluator_id}>
+                {others.map((ev) => (
+                  <option
+                    key={ev.evaluator_id}
+                    value={ev.evaluator_id}
+                  >
                     {ev.name}
                   </option>
                 ))}
@@ -138,9 +164,13 @@ export default function EvaluatorAssignModal({ team, onClose, onSuccess }) {
 
         {/* FOOTER */}
         <div className="p-4 bg-gray-50 flex justify-end gap-3 rounded-b-xl">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded-lg">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 rounded-lg"
+          >
             Cancel
           </button>
+
           <button
             disabled={!selectedEvaluator || loading}
             onClick={assignEvaluator}

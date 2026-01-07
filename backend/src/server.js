@@ -3,7 +3,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const app = require('./app');
 const initializeDatabase = require("../utils/databaseInitializer"); // Import the initializer
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8088;
 
 // Initialize the database then start the server
 initializeDatabase()

@@ -1,60 +1,63 @@
-const BASE_URL = "http://localhost:5001/api"; // Replace with your backend URL
+import axios from "axios";
 
-// Helper function to handle responses
-async function handleResponse(response) {
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "API request failed");
-    }
-    return response.json();
-}
+const BASE_URL = "http://localhost:8088/api"; // backend base URL
+
+// Create axios instance (clean & reusable)
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Optional: attach token automatically (safe even if token doesn't exist)
+api.interceptors.request.use((config) => {
+  const token =
+    localStorage.getItem("adminToken") ||
+    localStorage.getItem("evaluatorToken") ||
+    localStorage.getItem("teamToken");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+/* ================= API FUNCTIONS ================= */
 
 // Fetch all registrations
 export async function getRegistrations() {
-    const response = await fetch(`${BASE_URL}/registrations`);
-    return handleResponse(response);
+  const { data } = await api.get("/registrations");
+  return data;
 }
 
 // Fetch a single team by ID
 export async function getTeam(id) {
-    const response = await fetch(`${BASE_URL}/registrations/${id}`);
-    return handleResponse(response);
+  const { data } = await api.get(`/registrations/${id}`);
+  return data;
 }
 
 // Update team score/status
-export async function updateTeam(teamId, data) {
-    const response = await fetch(`${BASE_URL}/registrations/${teamId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
-    return handleResponse(response);
+export async function updateTeam(teamId, payload) {
+  const { data } = await api.put(`/registrations/${teamId}`, payload);
+  return data;
 }
 
 // Send confirmation or rejection email
 export async function sendEmail(emailData) {
-    const response = await fetch(`${BASE_URL}/send-email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(emailData),
-    });
-    return handleResponse(response);
+  const { data } = await api.post("/send-email", emailData);
+  return data;
 }
 
 // Add a new registration (optional)
-export async function addRegistration(data) {
-    const response = await fetch(`${BASE_URL}/registrations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
-    return handleResponse(response);
+export async function addRegistration(payload) {
+  const { data } = await api.post("/registrations", payload);
+  return data;
 }
 
 // Delete a registration (optional)
 export async function deleteRegistration(teamId) {
-    const response = await fetch(`${BASE_URL}/registrations/${teamId}`, {
-        method: "DELETE",
-    });
-    return handleResponse(response);
+  const { data } = await api.delete(`/registrations/${teamId}`);
+  return data;
 }

@@ -15,7 +15,7 @@ export default function Teams() {
   ========================= */
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
-    fetch("http://localhost:5001/api/registrations/ready-for-evaluation", {
+    fetch("http://localhost:8088/api/registrations/ready-for-evaluation", {
       headers: {
         "Authorization": token ? `Bearer ${token}` : ""
       }

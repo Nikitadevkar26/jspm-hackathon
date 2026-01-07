@@ -1,6 +1,8 @@
 import { Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,6 +28,52 @@ const Login = () => {
     return true;
   };
 
+  // /* ---------------- SUBMIT ---------------- */
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!validateForm()) return;
+
+  //   // 🔁 Switch API based on login type
+  //   let API_URL;
+  //   if (loginType === "team") API_URL = "http://localhost:8088/api/team-login/login";
+  //   else if (loginType === "evaluator") API_URL = "http://localhost:8088/api/evaluators/login";
+  //   else API_URL = "http://localhost:8088/api/admin/login";
+
+  //   try {
+  //     const response = await fetch(API_URL, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       setError(data.message || "Login failed");
+  //       return;
+  //     }
+
+  //     // 🔐 Store separately to avoid clashes
+  //     if (loginType === "team") {
+  //       localStorage.setItem("teamUser", JSON.stringify(data.user));
+  //       localStorage.setItem("teamToken", data.token); // Add token
+  //       navigate("/dashboard");
+  //     } else if (loginType === "evaluator") {
+  //       localStorage.setItem("evaluatorUser", JSON.stringify(data.user));
+  //       localStorage.setItem("evaluatorToken", data.token); // Add token
+  //       navigate("/evaluator/evaluator-dashboard");
+  //     } else {
+  //       localStorage.setItem("adminUser", JSON.stringify(data.admin)); // Use data.admin
+  //       localStorage.setItem("adminToken", data.token); // Add token
+  //       navigate("/admin/dashboard");
+  //     }
+
+  //   } catch (err) {
+  //     setError("Unable to connect to server");
+  //   }
+  // };
+
   /* ---------------- SUBMIT ---------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,43 +82,43 @@ const Login = () => {
 
     // 🔁 Switch API based on login type
     let API_URL;
-    if (loginType === "team") API_URL = "http://localhost:5001/api/team-login/login";
-    else if (loginType === "evaluator") API_URL = "http://localhost:5001/api/evaluators/login";
-    else API_URL = "http://localhost:5001/api/admin/login";
+    if (loginType === "team") API_URL = "http://localhost:8088/api/team-login/login";
+    else if (loginType === "evaluator") API_URL = "http://localhost:8088/api/evaluators/login";
+    else API_URL = "http://localhost:8088/api/admin/login";
 
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post(
+        API_URL,
+        { email, password },
+        {
+          headers: { "Content-Type": "application/json" }
+        }
+      );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Login failed");
-        return;
-      }
+      const data = response.data;
 
       // 🔐 Store separately to avoid clashes
       if (loginType === "team") {
         localStorage.setItem("teamUser", JSON.stringify(data.user));
-        localStorage.setItem("teamToken", data.token); // Add token
-        navigate("/dashboard");
+        localStorage.setItem("teamToken", data.token);
+        navigate("/dashboard/profile");
       } else if (loginType === "evaluator") {
         localStorage.setItem("evaluatorUser", JSON.stringify(data.user));
-        localStorage.setItem("evaluatorToken", data.token); // Add token
+        localStorage.setItem("evaluatorToken", data.token);
         navigate("/evaluator/evaluator-dashboard");
       } else {
-        localStorage.setItem("adminUser", JSON.stringify(data.admin)); // Use data.admin
-        localStorage.setItem("adminToken", data.token); // Add token
+        localStorage.setItem("adminUser", JSON.stringify(data.admin));
+        localStorage.setItem("adminToken", data.token);
         navigate("/admin/dashboard");
       }
 
     } catch (err) {
-      setError("Unable to connect to server");
+      setError(
+        err.response?.data?.message || "Unable to connect to server"
+      );
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] px-4">

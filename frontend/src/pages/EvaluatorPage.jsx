@@ -2,6 +2,7 @@
 
 import { Check, Eye, Mail, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 import EvaluatorDetailModal from "../components/evaluator/EvaluatorDetailModal";
 import EvaluatorEmailModal from "../components/evaluator/EvaluatorEmailModal";
@@ -20,18 +21,23 @@ export default function EvaluatorPage() {
   ============================ */
   const fetchEvaluators = async () => {
     try {
+      setError("");
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("http://localhost:5001/api/evaluators", {
-        headers: {
-          "Authorization": token ? `Bearer ${token}` : ""
-        }
-      });
-      if (!res.ok) throw new Error("Fetch failed");
 
-      const data = await res.json();
-      setEvaluators(data);
+      const { data } = await axios.get(
+        "http://localhost:8088/api/evaluators",
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
+      );
+
+      setEvaluators(Array.isArray(data) ? data : []);
     } catch (err) {
+      console.error("Fetch evaluators error:", err);
       setError("Failed to load evaluators");
+      setEvaluators([]);
     }
   };
 
@@ -47,23 +53,24 @@ export default function EvaluatorPage() {
       setLoadingId(id);
       setError("");
 
-      const res = await fetch(
-        `http://localhost:5001/api/evaluators/${id}/status`,
+      const token = localStorage.getItem("adminToken");
+
+      await axios.put(
+        `http://localhost:8088/api/evaluators/${id}/status`,
+        { status },
         {
-          method: "PUT",
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": localStorage.getItem("adminToken") ? `Bearer ${localStorage.getItem("adminToken")}` : ""
+            Authorization: token ? `Bearer ${token}` : "",
           },
-          body: JSON.stringify({ status })
         }
       );
 
-      if (!res.ok) throw new Error("Status update failed");
-
       await fetchEvaluators();
     } catch (err) {
-      setError(err.message);
+      console.error("Status update error:", err);
+      setError(
+        err.response?.data?.message || "Status update failed"
+      );
     } finally {
       setLoadingId(null);
     }
@@ -82,20 +89,21 @@ export default function EvaluatorPage() {
   ============================ */
   const sendEmail = async (payload) => {
     try {
-      await fetch(
-        `http://localhost:5001/api/evaluators/${selectedEvaluator.evaluator_id}/send-email`,
+      const token = localStorage.getItem("adminToken");
+
+      await axios.post(
+        `http://localhost:8088/api/evaluators/${selectedEvaluator.evaluator_id}/send-email`,
+        payload,
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": localStorage.getItem("adminToken") ? `Bearer ${localStorage.getItem("adminToken")}` : ""
+            Authorization: token ? `Bearer ${token}` : "",
           },
-          body: JSON.stringify(payload)
         }
       );
 
       alert("Email sent successfully");
-    } catch {
+    } catch (err) {
+      console.error("Send email error:", err);
       alert("Failed to send email");
     }
   };
@@ -131,12 +139,13 @@ export default function EvaluatorPage() {
 
                 <td className="px-6 py-4 text-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold ${ev.status === "Approved"
+                    className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      ev.status === "Approved"
                         ? "bg-green-100 text-green-700"
                         : ev.status === "Rejected"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
+                        ? "bg-red-100 text-red-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
                   >
                     {ev.status}
                   </span>
@@ -147,7 +156,9 @@ export default function EvaluatorPage() {
 
                     {/* VIEW DETAILS */}
                     <button
-                      onClick={() => setSelectedEvaluatorId(ev.evaluator_id)}
+                      onClick={() =>
+                        setSelectedEvaluatorId(ev.evaluator_id)
+                      }
                       className="bg-slate-600 text-white px-3 py-1 rounded flex items-center gap-1"
                     >
                       <Eye size={14} /> View

@@ -8,7 +8,7 @@ import EvaluatorAssignModal from "../components/EvaluatorAssignModal";
  * Backend mount:
  * app.use("/api/registrations", registrationRoutes);
  */
-const BASE_URL = "http://localhost:5001/api/registrations";
+const BASE_URL = "http://localhost:8088/api/registrations";
 
 export default function SectionHeadPage() {
   const [teams, setTeams] = useState([]);
@@ -16,6 +16,33 @@ export default function SectionHeadPage() {
   const [filters, setFilters] = useState({ theme: "All", status: "All" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // /* ============================
+  //    FETCH TEAMS READY FOR EVALUATION
+  // ============================ */
+  // const fetchTeams = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError("");
+
+  //     const token = localStorage.getItem("adminToken");
+  //     const res = await fetch(`${BASE_URL}/ready-for-evaluation`, {
+  //       headers: {
+  //         "Authorization": token ? `Bearer ${token}` : ""
+  //       }
+  //     });
+  //     if (!res.ok) throw new Error(`API Error ${res.status}`);
+
+  //     const data = await res.json();
+  //     setTeams(Array.isArray(data) ? data : []);
+  //   } catch (err) {
+  //     console.error("FETCH TEAMS ERROR:", err);
+  //     setError("Failed to load teams ready for evaluation.");
+  //     setTeams([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   /* ============================
      FETCH TEAMS READY FOR EVALUATION
@@ -26,15 +53,15 @@ export default function SectionHeadPage() {
       setError("");
 
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`${BASE_URL}/ready-for-evaluation`, {
+      const res = await axios.get(`${BASE_URL}/ready-for-evaluation`, {
         headers: {
           "Authorization": token ? `Bearer ${token}` : ""
         }
       });
-      if (!res.ok) throw new Error(`API Error ${res.status}`);
 
-      const data = await res.json();
+      const data = res.data;
       setTeams(Array.isArray(data) ? data : []);
+
     } catch (err) {
       console.error("FETCH TEAMS ERROR:", err);
       setError("Failed to load teams ready for evaluation.");
@@ -43,6 +70,7 @@ export default function SectionHeadPage() {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchTeams();

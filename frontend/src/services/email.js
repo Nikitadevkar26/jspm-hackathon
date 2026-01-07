@@ -1,4 +1,6 @@
-const BASE_URL = "http://localhost:5001/api/send-email";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8088/api/send-email";
 
 /**
  * Send email to a team
@@ -7,20 +9,23 @@ const BASE_URL = "http://localhost:5001/api/send-email";
  */
 export async function sendEmail(emailData) {
   try {
-    const res = await fetch(BASE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(emailData),
+    const token =
+      localStorage.getItem("adminToken") ||
+      localStorage.getItem("evaluatorToken");
+
+    const { data } = await axios.post(BASE_URL, emailData, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
     });
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.message || "Failed to send email");
-    }
-
-    return res.json();
+    return data;
   } catch (error) {
-    console.error("sendEmail error:", error.message);
+    console.error(
+      "sendEmail error:",
+      error.response?.data?.message || error.message
+    );
     throw error;
   }
 }

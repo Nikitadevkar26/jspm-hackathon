@@ -1,6 +1,8 @@
-const API_URL = "http://localhost:5001/api/evaluators/register";
+const API_URL = "http://localhost:8088/api/evaluators/register";
+
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 /* ===================== GEO DATA (UNCHANGED) ===================== */
 const geoData = {
@@ -63,7 +65,7 @@ const EvaluatorRegistration = () => {
         return [];
     }, [formData.country, formData.state]);
 
-    /* ===================== HANDLERS (UNCHANGED) ===================== */
+    /* ===================== HANDLERS ===================== */
     const handleChange = (e) => {
         const { name, value } = e.target;
         let newFormData = { ...formData, [name]: value };
@@ -102,8 +104,6 @@ const EvaluatorRegistration = () => {
             return setError("Organization details required."), false;
         if (!f.country || !f.state || !f.city)
             return setError("Location details required."), false;
-        // if (!idProofFile || !resumeFile)
-        //     return setError("All documents are required."), false;
         if (!idProofFile)
             return setError("ID Proof is required."), false;
         if (!formData.resumeDriveUrl)
@@ -117,17 +117,14 @@ const EvaluatorRegistration = () => {
         return true;
     };
 
+    /* ===================== SUBMIT (AXIOS ONLY CHANGE) ===================== */
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateForm()) return;
 
         try {
             const formPayload = new FormData();
 
-            // ----------------------------
-            // Append all text fields
-            // ----------------------------
             Object.entries({
                 name: formData.evaluatorName,
                 email: formData.evaluatorEmail,
@@ -139,34 +136,15 @@ const EvaluatorRegistration = () => {
                 country: formData.country,
                 state: formData.state,
                 city: formData.city,
-                resume_drive_url: formData.resumeDriveUrl // ✅ NEW
+                resume_drive_url: formData.resumeDriveUrl
             }).forEach(([key, value]) => {
                 formPayload.append(key, value);
             });
 
-            // ----------------------------
-            // Append files (multer fields)
-            // ----------------------------
             formPayload.append("id_proof_image", idProofFile);
-            // formPayload.append("resume_file", resumeFile);
 
-            // ----------------------------
-            // API Request
-            // ----------------------------
-            const res = await fetch(API_URL, {
-                method: "POST",
-                body: formPayload
-            });
+            await axios.post(API_URL, formPayload);
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.message || "Registration failed");
-            }
-
-            // ----------------------------
-            // Success Feedback
-            // ----------------------------
             alert(
                 "================================\n" +
                 "✅ APPLICATION SUBMITTED SUCCESSFULLY!\n" +
@@ -174,9 +152,6 @@ const EvaluatorRegistration = () => {
                 "Your application is under review.\nStatus: Pending Verification"
             );
 
-            // ----------------------------
-            // Reset form (recommended)
-            // ----------------------------
             setFormData({
                 password: "",
                 confirmPassword: "",
@@ -197,10 +172,12 @@ const EvaluatorRegistration = () => {
 
         } catch (error) {
             console.error("Evaluator Registration Error:", error);
-            setError(error.message || "Something went wrong. Please try again.");
+            setError(
+                error.response?.data?.message ||
+                "Something went wrong. Please try again."
+            );
         }
     };
-
 
     /* ===================== UI CLASSES ===================== */
     const input =
@@ -269,91 +246,52 @@ const EvaluatorRegistration = () => {
                     {/* DOCUMENTS */}
                     <section>
                         <h2 className={sectionTitle}>Documents</h2>
-
                         <div className="justify-between flex">
-                            {/* ID Proof Upload */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-800 mb-1">
                                     Valid ID Proof (Aadhar / Voter ID / PAN) <span className="text-red-600">*</span>
                                 </label>
-
                                 <input
                                     type="file"
                                     accept=".jpg,.jpeg,.png"
                                     onChange={(e) => handleFileChange(e, setIdProofFile, 2)}
                                     className="block w-full text-sm text-gray-700
-                   file:mr-4 file:py-2 file:px-4
-                   file:rounded-md file:border-0
-                   file:text-sm file:font-semibold
-                   file:bg-gray-100 file:text-gray-700
-                   hover:file:bg-gray-200
-                   cursor-pointer"
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-gray-100 file:text-gray-700
+                                    hover:file:bg-gray-200
+                                    cursor-pointer"
                                     required
                                 />
-
                                 <p className="mt-1 text-xs text-gray-500">
                                     Required. Max file size: 2MB. Accepted formats: JPG, JPEG, PNG.
                                 </p>
                             </div>
-
-                            {/* Resume Upload */}
-                            {/* <div>
-                                <label className="block text-sm font-medium text-gray-800 mb-1">
-                                    Upload Resume / CV <span className="text-red-600">*</span>
-                                </label>
-
-                                <input
-                                    type="file"
-                                    accept=".jpg,.jpeg,.png"
-                                    onChange={(e) => handleFileChange(e, setResumeFile, 2)}
-                                    className="block w-full text-sm text-gray-700
-                   file:mr-4 file:py-2 file:px-4
-                   file:rounded-md file:border-0
-                   file:text-sm file:font-semibold
-                   file:bg-gray-100 file:text-gray-700
-                   hover:file:bg-gray-200
-                   cursor-pointer"
-                                    required
-                                />
-
-                                <p className="mt-1 text-xs text-gray-500">
-                                    Required. Max file size: 2MB. Accepted formats: JPG, JPEG, PNG.
-                                </p>
-                            </div> */}
                         </div>
                     </section>
 
                     {/* RESUME LINK */}
                     <section>
                         <h2 className={sectionTitle}>Resume Link</h2>
-
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-1">
-                                Resume Public URL (Google Drive / OneDrive / Dropbox){" "}
-                                <span className="text-red-600">*</span>
+                                Resume Public URL (Google Drive / OneDrive / Dropbox) <span className="text-red-600">*</span>
                             </label>
-
                             <input
                                 type="url"
                                 name="resumeDriveUrl"
                                 placeholder="https://drive.google.com/file/d/..."
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg
-             focus:ring-2 focus:ring-red-700 focus:outline-none"
+                                className={input}
                                 value={formData.resumeDriveUrl}
                                 onChange={handleChange}
                                 required
                             />
-
-
-                            <p className="mt-1 text-xs text-gray-500 leading-relaxed">
-                                Upload your resume to a personal cloud drive and paste a{" "}
-                                <span className="font-medium text-gray-700">publicly accessible view link</span>.
-                                Ensure access is set to <strong>“Anyone with the link can view”</strong>.
+                            <p className="mt-1 text-xs text-gray-500">
+                                Ensure access is set to “Anyone with the link can view”.
                             </p>
                         </div>
                     </section>
-
-
 
                     {/* SECURITY */}
                     <section>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../../components/dashboard/Sidebar";
+import Sidebar from "../../components/teamLeaderdashboard/TeamLeaderSidebar";
 
 const TeamLeaderDashboard = () => {
   return (

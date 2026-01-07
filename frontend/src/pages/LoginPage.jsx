@@ -22,18 +22,50 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
 
+    // const handleLogin = async (e) => {
+    //     e.preventDefault();
+    //     setIsLoading(true);
+
+    //     try {
+    //         const res = await fetch('http://localhost:8088/api/admin/login', {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //             body: JSON.stringify({ email, password })
+    //         });
+
+    //         const data = await res.json();
+
+    //         if (data.success) {
+    //             console.log("Admin Logged In:", data.admin);
+    //             setAdmin(data.admin);          // ✅ STORE ADMIN
+    //             navigate("/dashboard");        // ✅ SINGLE NAVIGATION
+    //         }
+    //         else {
+    //             alert(data.message);
+    //         }
+
+    //     } catch (error) {
+    //         console.error('Login error:', error);
+    //         alert('Login failed. Server error.');
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            const res = await fetch('http://localhost:5001/api/admin/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+            const res = await axios.post(
+                'http://localhost:8088/api/admin/login',
+                { email, password },
+                {
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
 
-            const data = await res.json();
+            const data = res.data;
 
             if (data.success) {
                 console.log("Admin Logged In:", data.admin);
@@ -51,6 +83,7 @@ export default function LoginPage() {
             setIsLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans">

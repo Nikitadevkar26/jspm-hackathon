@@ -3,17 +3,24 @@
   "version": "1.0.0",
   "description": "Innovation JSCOE Project Management Backend",
   "main": "src/server.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "lint": "eslint ."
   },
-  "keywords": [],
+  "keywords": [
+    "express",
+    "mysql",
+    "backend",
+    "innovation",
+    "jscoe"
+  ],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -26,6 +33,6 @@
   },
   "devDependencies": {
     "eslint": "^9.39.2",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.11"
   }
 }

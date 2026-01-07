@@ -564,7 +564,7 @@ const App = () => {
     //     setLoading(true);
 
     //     try {
-    //         const response = await fetch('http://localhost:5001/api/teams/register', {
+    //         const response = await fetch('http://localhost:8088/api/teams/register', {
     //             method: 'POST',
     //             headers: { 'Content-Type': 'application/json' },
     //             body: JSON.stringify({ formData })
@@ -585,7 +585,47 @@ const App = () => {
     //     }
     // };
 
-    
+
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+
+    //     try {
+    //         const payload = new FormData();
+    //         payload.append('formData', JSON.stringify(formData));
+
+    //         if (formData.paymentProofFile instanceof File) {
+    //             payload.append('paymentProof', formData.paymentProofFile);
+    //         }
+
+    //         formData.members.forEach(member => {
+    //             if (member.idProofFile instanceof File) {
+    //                 payload.append('idProofs', member.idProofFile);
+    //             }
+    //         });
+
+    //         const res = await fetch(`${API_URL}/api/teams/register`, {
+    //             method: 'POST',
+    //             body: payload
+    //         });
+
+    //         const data = await res.json();
+
+    //         if (!res.ok) {
+    //             throw new Error(data.message || 'Registration failed');
+    //         }
+
+    //         // ✅ THIS WAS MISSING
+    //         setIsSubmitted(true);
+
+    //     } catch (err) {
+    //         console.error(err);
+    //         setToastMessage(err.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -605,16 +645,12 @@ const App = () => {
                 }
             });
 
-            const res = await fetch(`${API_URL}/api/teams/register`, {
-                method: 'POST',
-                body: payload
-            });
+            const res = await axios.post(
+                `${API_URL}/api/teams/register`,
+                payload
+            );
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.message || 'Registration failed');
-            }
+            const data = res.data;
 
             // ✅ THIS WAS MISSING
             setIsSubmitted(true);
@@ -626,6 +662,7 @@ const App = () => {
             setLoading(false);
         }
     };
+
 
 
     if (isSubmitted) {

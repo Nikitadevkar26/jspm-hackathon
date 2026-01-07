@@ -2,8 +2,9 @@
 
 import { ImageIcon, Mail, Phone, User, Users, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
-const FILE_BASE_URL = "http://localhost:5001/uploads";
+const FILE_BASE_URL = "http://localhost:8088/uploads";
 
 export default function TeamDetailModal({ teamId, onClose }) {
   const [team, setTeam] = useState(null);
@@ -17,21 +18,23 @@ export default function TeamDetailModal({ teamId, onClose }) {
     const fetchDetails = async () => {
       try {
         setLoading(true);
+        setError(null);
+
         const token = localStorage.getItem("adminToken");
-        const res = await fetch(
-          `http://localhost:5001/api/registrations/${teamId}`, {
-          headers: {
-            "Authorization": token ? `Bearer ${token}` : ""
+
+        const { data } = await axios.get(
+          `http://localhost:8088/api/registrations/${teamId}`,
+          {
+            headers: {
+              Authorization: token ? `Bearer ${token}` : "",
+            },
           }
-        }
         );
 
-        if (!res.ok) throw new Error("Fetch failed");
-
-        const data = await res.json();
         setTeam(data.team);
         setMembers(data.members || []);
       } catch (err) {
+        console.error("Fetch team details error:", err);
         setError("Failed to load team details");
       } finally {
         setLoading(false);
@@ -77,7 +80,7 @@ export default function TeamDetailModal({ teamId, onClose }) {
                 <Info label="Pincode" value={team.pincode} />
               </div>
 
-              {/* 💳 PAYMENT PROOF IMAGE */}
+              {/* PAYMENT PROOF IMAGE */}
               {team.payment_proof_image && (
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="font-semibold flex items-center gap-2 mb-3">
@@ -126,7 +129,7 @@ export default function TeamDetailModal({ teamId, onClose }) {
                         {m.branch}, {m.year} – {m.college_name}
                       </p>
 
-                      {/* 🪪 ID PROOF IMAGE */}
+                      {/* ID PROOF IMAGE */}
                       {m.id_proof_image && (
                         <div className="mt-3">
                           <p className="text-sm font-semibold flex items-center gap-2 mb-2">

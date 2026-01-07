@@ -14,7 +14,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-red-500 text-white shadow-md px-10 py-3 flex justify-between items-center">
-      
+
       {/* Logo */}
       <div className="flex items-center font-bold text-xl">
         <img

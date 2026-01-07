@@ -4,24 +4,26 @@ const morgan = require("morgan");
 const path = require("path");
 
 // Existing Routes
-const evaluatorRoutes = require("../routes/evaluatorRoutes");
-const teamRoutes = require("../routes/teamRoutes"); // ✅ ADDED teamRoutes
+const evaluatorRegistrationRoutes = require("../routes/evaluator/evaluatorRegistrationRoutes");
+const teamRegistrationRoutes = require("../routes/teams/teamRegistrationRoutes"); // ✅ ADDED teamRoutes
 
 // ✅ Team Leader Login Routes (ADDED)
-const teamLoginRoutes = require("../routes/teamLoginRoutes");
+const teamLoginRoutes = require("../routes/teams/teamLoginRoutes");
 
 // ✅ Team Detail Routes (ADDED)
-const teamDetailRoutes = require("../routes/teamDetailRoutes");
+const teamDetailRoutes = require("../routes/teams/teamDetailRoutes");
 
 // evaluator login route
 const evaluatorLoginRoutes = require("../routes/evaluator/evaluatorLoginRoutes");
 
 // idea submission route
 const ideaSubmissionRoutes = require("../routes/idea-submission/ideaSubmissionRoutes");
+const viewTeamIdeaRoutes = require("../routes/idea-submission/viewTeamIdeaRoutes");
+
 
 // admin 
-const adminAuthRoutes = require("../routes/admin/adminAuthRoutes");
-const registrationRoutes = require("../routes/admin/registrationRoutes");
+const adminLoginRoutes = require("../routes/admin/adminLoginRoutes");
+const registrationRoutes = require("../routes/admin/teamRegistrationRoutes");
 const evaluatorAdminRoutes = require("../routes/admin/evaluatorRoutes");
 const assignmentRoutes = require("../routes/admin/assignmentRoutes");
 
@@ -49,8 +51,8 @@ app.use(
 ========================= */
 
 // Existing evaluator routes
-app.use("/api/evaluators", evaluatorRoutes);
-app.use("/api/teams", teamRoutes); // ✅ ADDED teamRoutes
+app.use("/api/evaluators", evaluatorRegistrationRoutes);
+app.use("/api/teams", teamRegistrationRoutes); // ✅ ADDED teamRegistrationRoutes
 
 // ✅ Team Leader Login API (ADDED)
 app.use("/api/team-login", teamLoginRoutes);
@@ -59,7 +61,7 @@ app.use("/api/team-login", teamLoginRoutes);
 app.use("/api/team-details", teamDetailRoutes);
 
 // admin 
-app.use("/api/admin", adminAuthRoutes);
+app.use("/api/admin", adminLoginRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/evaluators", evaluatorAdminRoutes);
 app.use("/api/assignments", assignmentRoutes);
@@ -69,6 +71,9 @@ app.use("/api/evaluators", evaluatorLoginRoutes);
 
 // idea submission
 app.use("/api/idea-submission", ideaSubmissionRoutes);
+app.use("/api/admin-view-idea-submission", viewTeamIdeaRoutes);
+
+
 
 const pool = require("../config/db");
 

@@ -3,7 +3,7 @@
 This guide explains how to interact with the backend, the authentication flows for different users, and how to test using Postman.
 
 ## 🚀 General Information
-- **Base URL**: `http://localhost:5001`
+- **Base URL**: `http://localhost:8088`
 - **Content-Type**: `application/json` (unless uploading files, then use `multipart/form-data`)
 - **Static Files**: Uploaded images (ID proofs, payment proofs) are served at `{{baseUrl}}/uploads/`
 
@@ -66,7 +66,7 @@ A complete Postman collection is provided in the repository: `Innovation_JSCOE_H
 ### How to use:
 1.  **Import**: Import the JSON file into Postman.
 2.  **Environment Variables**:
-    -   Set `baseUrl` to `http://localhost:5001`.
+    -   Set `baseUrl` to `http://localhost:8088`.
     -   After Admin Login, copy the `token` and set it to the `adminToken` variable.
 3.  **Testing Team Registration**:
     -   Use the **Body -> form-data** tab.

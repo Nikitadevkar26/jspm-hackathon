@@ -1,44 +1,68 @@
-const BASE_URL = "http://localhost:5001/api/applications";
+import axios from "axios";
 
-// Get all applications
+const BASE_URL = "http://localhost:8088/api/applications";
+
+// Optional: get auth header (safe even if token doesn't exist)
+const getAuthHeaders = () => {
+  const token =
+    localStorage.getItem("adminToken") ||
+    localStorage.getItem("evaluatorToken");
+
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+/* ============================
+   GET ALL APPLICATIONS
+============================ */
 export async function getApplications() {
-  const res = await fetch(BASE_URL);
-  if (!res.ok) throw new Error("Failed to fetch applications");
-  return res.json();
+  const { data } = await axios.get(BASE_URL, {
+    headers: getAuthHeaders(),
+  });
+  return data;
 }
 
-// Get a single application by ID
+/* ============================
+   GET SINGLE APPLICATION
+============================ */
 export async function getApplication(id) {
-  const res = await fetch(`${BASE_URL}/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch application");
-  return res.json();
-}
-
-// Add a new application
-export async function addApplication(data) {
-  const res = await fetch(BASE_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+  const { data } = await axios.get(`${BASE_URL}/${id}`, {
+    headers: getAuthHeaders(),
   });
-  if (!res.ok) throw new Error("Failed to add application");
-  return res.json();
+  return data;
 }
 
-// Update application (score/status)
-export async function updateApplication(id, data) {
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+/* ============================
+   ADD APPLICATION
+============================ */
+export async function addApplication(payload) {
+  const { data } = await axios.post(BASE_URL, payload, {
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+    },
   });
-  if (!res.ok) throw new Error("Failed to update application");
-  return res.json();
+  return data;
 }
 
-// Delete application
+/* ============================
+   UPDATE APPLICATION
+============================ */
+export async function updateApplication(id, payload) {
+  const { data } = await axios.put(`${BASE_URL}/${id}`, payload, {
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+    },
+  });
+  return data;
+}
+
+/* ============================
+   DELETE APPLICATION
+============================ */
 export async function deleteApplication(id) {
-  const res = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
-  if (!res.ok) throw new Error("Failed to delete application");
-  return res.json();
+  const { data } = await axios.delete(`${BASE_URL}/${id}`, {
+    headers: getAuthHeaders(),
+  });
+  return data;
 }

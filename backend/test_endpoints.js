@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const BASE_URL = 'http://localhost:5001';
+const BASE_URL = 'http://localhost:8088';
 const ADMIN_EMAIL = 'admin@test.com';
 const ADMIN_PASSWORD = 'password123';
 
