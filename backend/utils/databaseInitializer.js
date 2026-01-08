@@ -27,8 +27,9 @@ const initializeDatabase = async () => {
       `DROP TABLE IF EXISTS notices`,
       `DROP TABLE IF EXISTS section_heads`,
       `DROP TABLE IF EXISTS evaluators`,
-      `DROP TABLE IF EXISTS admins`,
+      // ❌ DO NOT DROP admins
     ];
+
 
     for (const stmt of dropStatements) {
       await connection.query(stmt);
@@ -38,7 +39,7 @@ const initializeDatabase = async () => {
     const createTables = [
       /* Admins */
       `
-      CREATE TABLE admins (
+      CREATE TABLE IF NOT EXISTS admins (
         admin_id INT NOT NULL AUTO_INCREMENT,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(255) NOT NULL,

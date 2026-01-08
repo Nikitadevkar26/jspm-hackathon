@@ -43,7 +43,7 @@ const Guidelines = () => {
             </li>
             <li>
               <strong className="text-red-600">Team Size:</strong>{" "}
-              Each team must consist of <strong>Minimum 2 members and a maximum of 4 members, including the Team Leader</strong>.
+              Each team can consist <strong>upto 4 members, including the Team Leader</strong>.
             </li>
             <li>
               <strong className="text-red-600">Mandatory Diversity:</strong>{" "}
