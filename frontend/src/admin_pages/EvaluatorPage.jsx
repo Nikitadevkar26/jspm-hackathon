@@ -167,7 +167,7 @@ export default function EvaluatorPage() {
                         <Eye size={14} /> View
                       </button>
 
-                      {/* APPROVE / REJECT */}
+                      {/* APPROVE / REJECT  */}
                       {ev.status === "Pending" && (
                         <>
                           <button
