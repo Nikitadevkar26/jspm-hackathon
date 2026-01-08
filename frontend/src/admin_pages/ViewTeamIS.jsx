@@ -75,9 +75,8 @@ export default function ViewTeamIS() {
                   </td>
                   <td className="p-3">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                        STATUS_COLORS[idea.submission_status]
-                      }`}
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${STATUS_COLORS[idea.submission_status]
+                        }`}
                     >
                       {idea.submission_status}
                     </span>

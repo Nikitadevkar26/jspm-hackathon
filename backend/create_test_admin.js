@@ -4,8 +4,8 @@ const bcrypt = require('bcryptjs');
 
 const createTestAdmin = async () => {
     try {
-        const email = 'sriharshini.ICadmin@gmail.com';
-        const password = 'password123';
+        const email = 'nikita.ICadmin@gmail.com';
+        const password = 'Nikita@26';
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Check if admin exists

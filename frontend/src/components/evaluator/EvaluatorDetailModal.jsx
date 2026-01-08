@@ -119,13 +119,12 @@ export default function EvaluatorDetailModal({
                     Status
                   </span>
                   <span
-                    className={`inline-flex self-start px-2 py-1 rounded text-xs font-bold ${
-                      evaluator.status === "Approved"
-                        ? "bg-green-100 text-green-700"
-                        : evaluator.status === "Rejected"
+                    className={`inline-flex self-start px-2 py-1 rounded text-xs font-bold ${evaluator.status === "Approved"
+                      ? "bg-green-100 text-green-700"
+                      : evaluator.status === "Rejected"
                         ? "bg-red-100 text-red-700"
                         : "bg-yellow-100 text-yellow-700"
-                    }`}
+                      }`}
                   >
                     {evaluator.status}
                   </span>

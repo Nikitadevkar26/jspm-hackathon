@@ -88,7 +88,7 @@ export default function EvaluatorAssignModal({
       // Backend sends 409 if team already assigned
       setError(
         err.response?.data?.message ||
-          "This team is already assigned to an evaluator."
+        "This team is already assigned to an evaluator."
       );
     } finally {
       setLoading(false);

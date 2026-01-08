@@ -7,7 +7,7 @@ const pool = mysql.createPool({
   port: (process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306),
   user: (process.env.DB_USER || 'root').replace(/[^a-zA-Z0-9]/g, ''), // Aggressively clean user
   password: (process.env.DB_PASSWORD || 'root').replace(/[^a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/g, '123'), // Aggressively clean password allowing common special chars
-  database: 'innovationjscoe_new',
+  database: 'innovationjscoe',
   waitForConnections: true,
   connectionLimit: 10
 });
