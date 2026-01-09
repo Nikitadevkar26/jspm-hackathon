@@ -14,37 +14,80 @@ class TeamModel {
       }
 
       /* ===============================
-         INSERT INTO teams
-      =============================== */
+   INSERT INTO teams
+=============================== */
+      //     const [teamResult] = await connection.execute(
+      //       `
+      // INSERT INTO teams
+      // (
+      //   team_name,
+      //   institution,
+      //   college_type,
+      //   country,
+      //   pincode,
+      //   leader_name,
+      //   email,
+      //   problem_statement_category,
+      //   project_title,
+      //   project_description,
+      //   theme,
+      //   status,
+      //   payment_proof_image
+      // )
+      // VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?)
+      // `,
+      //       [
+      //         teamData.teamName ?? null,
+      //         teamData.institution ?? null,
+      //         teamData.collegeType ?? null,
+      //         teamData.country ?? 'India',
+      //         teamData.pincode ?? null,
+      //         leader.name ?? null,
+      //         leader.email ?? null,
+      //         teamData.problemStatementCategory ?? null,
+      //         teamData.projectTitle ?? null,
+      //         teamData.projectDescription ?? null,
+      //         teamData.theme ?? null,
+      //         teamData.paymentProofFile ?? null
+      //       ]
+      //     );
+
       const [teamResult] = await connection.execute(
         `
-        INSERT INTO teams
-        (
-          team_name,
-          college_type,
-          country,
-          pincode,
-          leader_name,
-          email,
-          project_title,
-          theme,
-          status,
-          payment_proof_image
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?)
-        `,
+  INSERT INTO teams
+  (
+    team_name,
+    institution,
+    college_type,
+    country,
+    pincode,
+    leader_name,
+    email,
+    problem_statement_category,
+    project_title,
+    project_description,
+    theme,
+    status,
+    payment_proof_image
+  )
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?)
+  `,
         [
           teamData.teamName || null,
+          teamData.institution || null,
           teamData.collegeType || null,
           teamData.country || null,
           teamData.pincode || null,
           leader.name || null,
           leader.email || null,
+          teamData.problemStatementCategory || 'Software',
+          teamData.teamName || null,              // project_title (you don’t have a separate field)
           teamData.projectDescription || null,
           teamData.theme || null,
           teamData.paymentProofFile || null
         ]
       );
+
 
       const teamId = teamResult.insertId;
 
@@ -53,39 +96,41 @@ class TeamModel {
       =============================== */
       const memberValues = membersData.map(member => [
         teamId,
-        member.name || null,
-        member.email || null,
-        member.phone || null,
-        member.gender || null,
-        member.branch || null,
-        member.stream || null,
-        member.year || null,
-        member.collegeName || null,
-        member.state || null,
-        member.city || null,
-        member.idProofFile || null,
-        member.role || null
+        member.name ?? null,
+        member.email ?? null,
+        member.phone ?? null,
+        member.gender ?? null,
+        member.branch ?? null,
+        member.stream ?? null,
+        member.year ?? null,
+        member.collegeName ?? null,
+        member.state ?? null,
+        member.city ?? null,
+        member.idProofFile ?? null,
+        member.role ?? null
       ]);
 
       const insertMembersSQL = `
-        INSERT INTO team_members
-        (
-          team_id,
-          member_name,
-          email,
-          phone,
-          gender,
-          branch,
-          stream,
-          year,
-          college_name,
-          state,
-          city,
-          id_proof_image,
-          role
-        )
-        VALUES ?
-      `;
+  INSERT INTO team_members
+  (
+    team_id,
+    member_name,
+    email,
+    phone,
+    gender,
+    branch,
+    stream,
+    year,
+    college_name,
+    state,
+    city,
+    id_proof_image,
+    role
+  )
+  VALUES ?
+`;
+
+      await connection.query(insertMembersSQL, [memberValues]);
 
       await connection.query(insertMembersSQL, [memberValues]);
 
@@ -106,7 +151,7 @@ class TeamModel {
         customError.code = 'DUPLICATE_ENTRY'; // Add a custom code
         throw customError;
       }
-      
+
       throw error;
     } finally {
       connection.release();

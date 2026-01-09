@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 // Added Globe and FileText for new fields
 import { Users, User, Zap, GraduationCap, Phone, Mail, CheckCircle, MapPin, ExternalLink, Globe, AlertTriangle, PlusCircle, MinusCircle, UserCheck, FileText, Calendar } from 'lucide-react';
 import API_URL from '../config';
+import axios from 'axios';
 
 // Custom Tailwind configuration for the new academic theme (Deep Red/Crimson and Orange Accent)
 const SIH_PRIMARY = 'rgb(153, 27, 27)'; // Tailwind red-800 (Deep Crimson)
@@ -627,6 +628,59 @@ const App = () => {
     //     }
     // };
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+
+    //     try {
+    //         const payload = new FormData();
+    //         payload.append('formData', JSON.stringify(formData));
+
+    //         if (formData.paymentProofFile instanceof File) {
+    //             payload.append('paymentProof', formData.paymentProofFile);
+    //         }
+
+    //         formData.members.forEach(member => {
+    //             if (member.idProofFile instanceof File) {
+    //                 payload.append('idProofs', member.idProofFile);
+    //             }
+    //         });
+
+    //         // const res = await axios.post(
+    //         //     `${API_URL}/api/teams/register`,
+    //         //     payload
+    //         // );
+
+    //         // const res = await axios.post(
+    //         //     `${API_URL}/api/teams/register`,
+    //         //     payload,
+    //         //     {
+    //         //         headers: {
+    //         //             'Content-Type': 'multipart/form-data'
+    //         //         }
+    //         //     }
+    //         // );
+
+    //         await axios.post(
+    //             `${API_URL}/api/teams/register`,
+    //             payload
+    //         );
+
+
+
+    //         const data = res.data;
+
+    //         // ✅ THIS WAS MISSING
+    //         setIsSubmitted(true);
+
+    //     } catch (err) {
+    //         console.error(err);
+    //         setToastMessage(err.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -645,23 +699,29 @@ const App = () => {
                 }
             });
 
+            // ✅ STORE RESPONSE
             const res = await axios.post(
                 `${API_URL}/api/teams/register`,
                 payload
             );
 
-            const data = res.data;
+            // ✅ OPTIONAL: if backend sends message
+            // const data = res.data;
 
-            // ✅ THIS WAS MISSING
             setIsSubmitted(true);
 
         } catch (err) {
             console.error(err);
-            setToastMessage(err.message);
+
+            // Show backend message if available
+            setToastMessage(
+                err.response?.data?.message || 'Registration failed'
+            );
         } finally {
             setLoading(false);
         }
     };
+
 
 
 

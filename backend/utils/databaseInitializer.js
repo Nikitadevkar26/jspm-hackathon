@@ -52,25 +52,30 @@ const initializeDatabase = async () => {
 
       /* Evaluators */
       `
-      CREATE TABLE evaluators (
-        evaluator_id INT NOT NULL AUTO_INCREMENT,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
-        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-        phone VARCHAR(20) NOT NULL,
-        organization VARCHAR(150) NOT NULL,
-        department VARCHAR(150) NOT NULL,
-        role VARCHAR(150) NOT NULL,
-        country VARCHAR(100) NOT NULL,
-        state VARCHAR(100) NOT NULL,
-        city VARCHAR(100) NOT NULL,
-        resume_drive_url VARCHAR(500) NOT NULL,
-        PRIMARY KEY (evaluator_id),
-        UNIQUE KEY email (email)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-      `,
+CREATE TABLE evaluators (
+  evaluator_id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  organization VARCHAR(150) NOT NULL,
+  department VARCHAR(150) NOT NULL,
+  role VARCHAR(150) NOT NULL,
+  country VARCHAR(100) NOT NULL,
+  state VARCHAR(100) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  id_proof_image VARCHAR(255) NULL,
+  resume_drive_url VARCHAR(500) NOT NULL,
+  status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  profile_image VARCHAR(255) NULL,
+  resume_file VARCHAR(255) NULL,
+  approved_at DATETIME NULL,
+  PRIMARY KEY (evaluator_id),
+  UNIQUE KEY email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+`
+      ,
 
       /* Section Heads */
       `
@@ -98,21 +103,73 @@ const initializeDatabase = async () => {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
       `,
 
+      /* Teams */
+      `
+      CREATE TABLE IF NOT EXISTS teams (
+  team_id INT NOT NULL AUTO_INCREMENT,
+  team_name VARCHAR(255) NOT NULL,
+
+  -- from form
+  institution VARCHAR(255) DEFAULT NULL,
+  college_type ENUM('Autonomous','Private','Affiliated','Government'),
+  country VARCHAR(100) DEFAULT 'India',
+  state VARCHAR(100) DEFAULT NULL,
+  pincode VARCHAR(20),
+
+  leader_name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+
+  -- from form
+  problem_statement_category ENUM('Software','Hardware') NOT NULL,
+  project_title VARCHAR(255),
+  project_description TEXT NOT NULL,
+  theme VARCHAR(255),
+
+  score INT,
+  status ENUM('approved','rejected','Pending') DEFAULT 'Pending',
+  payment_proof_image VARCHAR(255),
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (team_id),
+  UNIQUE KEY email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+      `,   // ✅ THIS COMMA WAS MISSING
+
       /* Team Members */
       `
-      CREATE TABLE team_members (
-        member_id INT NOT NULL AUTO_INCREMENT,
-        team_id INT NOT NULL,
-        member_name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        phone VARCHAR(20) NOT NULL,
-        gender ENUM('Male','Female','Other') NOT NULL,
-        branch VARCHAR(100) NOT NULL,
-        year VARCHAR(50) NOT NULL,
-        PRIMARY KEY (member_id),
-        KEY team_id (team_id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+      CREATE TABLE IF NOT EXISTS team_members (
+  member_id INT NOT NULL AUTO_INCREMENT,
+  team_id INT NOT NULL,
+
+  member_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  gender ENUM('Male','Female','Other') NOT NULL,
+
+  branch VARCHAR(100) NOT NULL,
+  stream VARCHAR(100) NOT NULL,
+  year VARCHAR(50) NOT NULL,
+
+  college_name VARCHAR(255) NOT NULL,
+  state VARCHAR(100) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+
+  id_proof_image VARCHAR(255),
+  role VARCHAR(50),
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (member_id),
+  KEY team_id (team_id),
+  CONSTRAINT fk_team_members_team
+    FOREIGN KEY (team_id)
+    REFERENCES teams(team_id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
       `,
+
 
       /* Grievances */
       `
@@ -128,22 +185,30 @@ const initializeDatabase = async () => {
 
       /* Idea Submission */
       `
-      CREATE TABLE idea_submission (
-        id INT NOT NULL AUTO_INCREMENT,
-        team_id INT NOT NULL,
-        title VARCHAR(100) NOT NULL,
-        description TEXT NOT NULL,
-        summary TEXT NOT NULL,
-        drive_link VARCHAR(500) NOT NULL,
-        submission_status ENUM(
-          'SUBMITTED',
-          'UNDER_REVIEW',
-          'APPROVED',
-          'REJECTED'
-        ) DEFAULT 'SUBMITTED',
-        PRIMARY KEY (id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-      `,
+CREATE TABLE idea_submission (
+  id INT NOT NULL AUTO_INCREMENT,
+  team_id INT NOT NULL,
+  team_name VARCHAR(150) NOT NULL,
+  title VARCHAR(100) NOT NULL,
+  description TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  drive_link VARCHAR(500) NOT NULL,
+  github_link VARCHAR(300) NULL,
+  youtube_link VARCHAR(300) NULL,
+  submission_status ENUM(
+    'SUBMITTED',
+    'UNDER_REVIEW',
+    'APPROVED',
+    'REJECTED'
+  ) DEFAULT 'SUBMITTED',
+  submitted_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY team_id (team_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+`
+      ,
 
       /* Evaluation Scores */
       `
