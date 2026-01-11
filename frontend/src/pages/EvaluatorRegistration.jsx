@@ -50,7 +50,9 @@ const EvaluatorRegistration = () => {
         city: "",
         state: "",
         country: "",
-        resumeDriveUrl: ""
+        resumeDriveUrl: "",
+        githubProfileUrl: "",
+        youtubeChannelUrl: ""
     });
 
     const availableStates = useMemo(
@@ -290,6 +292,46 @@ const EvaluatorRegistration = () => {
                             <p className="mt-1 text-xs text-gray-500">
                                 Ensure access is set to “Anyone with the link can view”.
                             </p>
+                        </div>
+                    </section>
+
+
+                    {/* OPTIONAL LINKS */}
+                    <section>
+                        <h2 className={sectionTitle}>Optional Links</h2>
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-800 mb-1">
+                                    GitHub Profile URL
+                                </label>
+                                <input
+                                    type="url"
+                                    name="githubProfileUrl"
+                                    placeholder="https://github.com/..."
+                                    className={input}
+                                    value={formData.githubProfileUrl}
+                                    onChange={handleChange}
+                                />
+                                <p className="mt-1 text-xs text-gray-500">
+                                    Ensure access is set to “Anyone with the link can view”.
+                                </p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-800 mb-1">
+                                    Youtube Channel URL
+                                </label>
+                                <input
+                                    type="url"
+                                    name="youtubeChannelUrl"
+                                    placeholder="https://youtube.com/..."
+                                    className={input}
+                                    value={formData.youtubeChannelUrl}
+                                    onChange={handleChange}
+                                />
+                                <p className="mt-1 text-xs text-gray-500">
+                                    Ensure access is set to “Anyone with the link can view”.
+                                </p>
+                            </div>
                         </div>
                     </section>
 

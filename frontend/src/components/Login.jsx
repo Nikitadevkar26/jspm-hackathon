@@ -102,11 +102,24 @@ const Login = () => {
         localStorage.setItem("teamUser", JSON.stringify(data.user));
         localStorage.setItem("teamToken", data.token);
         navigate("/dashboard/profile");
-      } else if (loginType === "evaluator") {
-        localStorage.setItem("evaluatorUser", JSON.stringify(data.user));
+      }
+
+
+      else if (loginType === "evaluator") {
+        localStorage.setItem(
+          "evaluator",
+          JSON.stringify({
+            evaluator_id: data.user.evaluator_id,
+            name: data.user.name,
+            email: data.user.email
+          })
+        );
         localStorage.setItem("evaluatorToken", data.token);
         navigate("/evaluator/evaluator-dashboard");
-      } else {
+      }
+
+
+      else {
         localStorage.setItem("adminUser", JSON.stringify(data.admin));
         localStorage.setItem("adminToken", data.token);
         navigate("/admin/dashboard");

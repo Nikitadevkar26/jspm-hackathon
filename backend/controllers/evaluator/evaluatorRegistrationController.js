@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const Evaluator = require("../../models/evaluator/evaluatorRegistrationModel");
 
-
 exports.registerEvaluator = async (req, res) => {
   try {
     const {
@@ -15,12 +14,14 @@ exports.registerEvaluator = async (req, res) => {
       country,
       state,
       city,
-      resume_drive_url
+      resume_drive_url,
+      github_profile_url,     // ✅ NEW
+      youtube_channel_url     // ✅ NEW
     } = req.body;
 
-    // --------------------------------------------------
-    // 1. Basic body validation
-    // --------------------------------------------------
+    /* ------------------------------
+       1. Basic body validation
+    ------------------------------ */
     if (
       !name ||
       !email ||
@@ -38,9 +39,9 @@ exports.registerEvaluator = async (req, res) => {
       });
     }
 
-    // --------------------------------------------------
-    // 2. Resume URL validation (MANDATORY + Google Drive)
-    // --------------------------------------------------
+    /* ------------------------------
+       2. Resume URL validation
+    ------------------------------ */
     if (!resume_drive_url) {
       return res.status(400).json({
         message: "Resume drive URL is required"
@@ -53,9 +54,9 @@ exports.registerEvaluator = async (req, res) => {
       });
     }
 
-    // --------------------------------------------------
-    // 3. File validation (ID proof is MANDATORY)
-    // --------------------------------------------------
+    /* ------------------------------
+       3. File validation
+    ------------------------------ */
     const idProofImage = req.files?.id_proof_image?.[0]?.filename;
 
     if (!idProofImage) {
@@ -64,9 +65,9 @@ exports.registerEvaluator = async (req, res) => {
       });
     }
 
-    // --------------------------------------------------
-    // 4. Duplicate email check
-    // --------------------------------------------------
+    /* ------------------------------
+       4. Duplicate email check
+    ------------------------------ */
     const [existing] = await Evaluator.findByEmail(email);
     if (existing.length > 0) {
       return res.status(409).json({
@@ -74,14 +75,14 @@ exports.registerEvaluator = async (req, res) => {
       });
     }
 
-    // --------------------------------------------------
-    // 5. Hash password
-    // --------------------------------------------------
+    /* ------------------------------
+       5. Hash password
+    ------------------------------ */
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // --------------------------------------------------
-    // 6. Create evaluator (DB insert)
-    // --------------------------------------------------
+    /* ------------------------------
+       6. Create evaluator
+    ------------------------------ */
     await Evaluator.createEvaluator({
       name,
       email,
@@ -94,12 +95,14 @@ exports.registerEvaluator = async (req, res) => {
       state,
       city,
       id_proof_image: idProofImage,
-      resume_drive_url
+      resume_drive_url,
+      github_profile_url: github_profile_url || null,   // ✅ NEW
+      youtube_channel_url: youtube_channel_url || null  // ✅ NEW
     });
 
-    // --------------------------------------------------
-    // 7. Success response
-    // --------------------------------------------------
+    /* ------------------------------
+       7. Success response
+    ------------------------------ */
     res.status(201).json({
       message: "Evaluator registered successfully",
       status: "Pending"

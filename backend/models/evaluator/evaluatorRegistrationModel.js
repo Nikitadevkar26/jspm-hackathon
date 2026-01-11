@@ -7,9 +7,11 @@ exports.createEvaluator = async (data) => {
       organization, department, role,
       country, state, city,
       id_proof_image,
-      resume_drive_url
+      resume_drive_url,
+      github_profile_url,
+      youtube_channel_url
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -24,15 +26,17 @@ exports.createEvaluator = async (data) => {
     data.state,
     data.city,
     data.id_proof_image,
-    data.resume_drive_url
+    data.resume_drive_url,
+    data.github_profile_url,
+    data.youtube_channel_url
   ];
 
   try {
     return await db.execute(sql, values);
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      const customError = new Error('A user with this email already exists.');
-      customError.code = 'DUPLICATE_ENTRY';
+    if (error.code === "ER_DUP_ENTRY") {
+      const customError = new Error("A user with this email already exists.");
+      customError.code = "DUPLICATE_ENTRY";
       throw customError;
     }
     throw error;

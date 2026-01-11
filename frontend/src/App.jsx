@@ -23,6 +23,11 @@ import TeamRegistration from "./pages/TeamRegistration";
    EVALUATOR DASHBOARD
 ========================= */
 import EvaluatorDashboardLayout from "../src/evaluator/layout/EvaluatorDashboardLayout";
+import EvaluatorDashboardContent from "./evaluator/evaluator-content/evaluatorDashboardContent.jsx";
+import EvaluatorProfilePage from "./evaluator/evaluator-profile-page/EvaluatorProfilePage.jsx";
+import EvaluatorAssignedTeams from "./evaluator/evaluator-assigned-team/EvaluatorAssignedTeams.jsx";
+import EvaluatorScoringPage from "./evaluator/evaluator-scoring-page/EvaluatorTeamScoringPage.jsx";
+const evaluator = JSON.parse(localStorage.getItem("evaluator"));
 
 /* =========================
    ADMIN DASHBOARD
@@ -93,10 +98,34 @@ const Layout = () => {
           </Route>
 
           {/* ================= EVALUATOR DASHBOARD ================= */}
-          <Route
-            path="/evaluator/evaluator-dashboard"
-            element={<EvaluatorDashboardLayout />}
-          />
+          <Route path="/evaluator/evaluator-dashboard" element={<EvaluatorDashboardLayout />}>
+
+            <Route
+              index
+              element={<EvaluatorDashboardContent evaluator={evaluator} />}
+            />
+
+            <Route
+              path="evaluator-dashboard-contents"
+              element={<EvaluatorDashboardContent evaluator={evaluator} />}
+            />
+
+            <Route
+              path="evaluator-profile-page"
+              element={<EvaluatorProfilePage evaluator={evaluator} />}
+            />
+
+            <Route
+              path="evaluator-assigned-team"
+              element={<EvaluatorAssignedTeams evaluator={evaluator} />}
+            />
+
+            <Route
+              path="evaluator-scoring-page/:teamId"
+              element={<EvaluatorScoringPage evaluator={evaluator} />}
+            />
+
+          </Route>
 
           {/* ================= ADMIN DASHBOARD ================= */}
           <Route path="/admin" element={

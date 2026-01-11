@@ -13,7 +13,7 @@ exports.setPassword = async (req, res) => {
 
     await TeamLoginModel.updatePassword(team_id, hashedPassword);
 
-    res.json({ message: "Password updated successfully" });
+    res.json({ message: "Password updated successfully. Please login again!!" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update password" });

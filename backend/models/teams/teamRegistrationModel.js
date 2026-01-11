@@ -13,76 +13,34 @@ class TeamModel {
         throw new Error('Leader not found in members data');
       }
 
-      /* ===============================
-   INSERT INTO teams
-=============================== */
-      //     const [teamResult] = await connection.execute(
-      //       `
-      // INSERT INTO teams
-      // (
-      //   team_name,
-      //   institution,
-      //   college_type,
-      //   country,
-      //   pincode,
-      //   leader_name,
-      //   email,
-      //   problem_statement_category,
-      //   project_title,
-      //   project_description,
-      //   theme,
-      //   status,
-      //   payment_proof_image
-      // )
-      // VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?)
-      // `,
-      //       [
-      //         teamData.teamName ?? null,
-      //         teamData.institution ?? null,
-      //         teamData.collegeType ?? null,
-      //         teamData.country ?? 'India',
-      //         teamData.pincode ?? null,
-      //         leader.name ?? null,
-      //         leader.email ?? null,
-      //         teamData.problemStatementCategory ?? null,
-      //         teamData.projectTitle ?? null,
-      //         teamData.projectDescription ?? null,
-      //         teamData.theme ?? null,
-      //         teamData.paymentProofFile ?? null
-      //       ]
-      //     );
-
       const [teamResult] = await connection.execute(
         `
   INSERT INTO teams
   (
     team_name,
-    institution,
     college_type,
     country,
     pincode,
     leader_name,
     email,
-    problem_statement_category,
     project_title,
-    project_description,
     theme,
     status,
     payment_proof_image
   )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?)
   `,
         [
           teamData.teamName || null,
-          teamData.institution || null,
+          // teamData.institution || null,
           teamData.collegeType || null,
           teamData.country || null,
           teamData.pincode || null,
           leader.name || null,
           leader.email || null,
-          teamData.problemStatementCategory || 'Software',
+          // teamData.problemStatementCategory || 'Software',
           teamData.teamName || null,              // project_title (you don’t have a separate field)
-          teamData.projectDescription || null,
+          // teamData.projectDescription || null,
           teamData.theme || null,
           teamData.paymentProofFile || null
         ]
@@ -130,7 +88,7 @@ class TeamModel {
   VALUES ?
 `;
 
-      await connection.query(insertMembersSQL, [memberValues]);
+      // await connection.query(insertMembersSQL, [memberValues]);
 
       await connection.query(insertMembersSQL, [memberValues]);
 

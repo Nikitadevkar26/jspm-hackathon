@@ -1,3 +1,4 @@
+require("dotenv").config();   // ✅ MUST BE FIRST
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -15,6 +16,16 @@ const teamDetailRoutes = require("../routes/teams/teamDetailRoutes");
 
 // evaluator login route
 const evaluatorLoginRoutes = require("../routes/evaluator/evaluatorLoginRoutes");
+
+// evaluator dashboard route
+const evaluatorDashboardContentRoutes = require("../routes/evaluator/evaluatorDashboardContentRoutes");
+const evaluatorDashboardProfileRoutes = require("../routes/evaluator/evaluatorDashboardProfileRoutes");
+const evaluatorAssignedTeamsRoutes = require(
+  "../routes/evaluator/evaluatorAssignedTeamsRoutes"
+);
+const evaluatorScoringTeamsRoutes = require(
+  "../routes/evaluator/evaluatorScoringTeamsRoutes"
+);
 
 // idea submission route
 const ideaSubmissionRoutes = require("../routes/idea-submission/ideaSubmissionRoutes");
@@ -68,6 +79,20 @@ app.use("/api/assignments", assignmentRoutes);
 
 // evaluator
 app.use("/api/evaluators", evaluatorLoginRoutes);
+
+// evaluator dashboard
+app.use("/api/evaluators", evaluatorDashboardContentRoutes);
+
+// evaluator profile
+app.use("/api/evaluators/profile", evaluatorDashboardProfileRoutes);
+
+// evaluator assigned teams
+app.use("/api/evaluators", evaluatorAssignedTeamsRoutes);
+
+// evaluator scoring teams
+app.use("/api/evaluators", evaluatorScoringTeamsRoutes);
+
+
 
 // idea submission
 app.use("/api/idea-submission", ideaSubmissionRoutes);

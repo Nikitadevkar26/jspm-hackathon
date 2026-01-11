@@ -2,7 +2,6 @@
 // import { useLocation } from "react-router-dom";
 // import axios from "axios";
 
-
 // const IdeaSubmission = () => {
 //   const location = useLocation();
 
@@ -123,7 +122,6 @@
 //       setLoading(false);
 //     }
 //   };
-
 
 //   return (
 //     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -301,7 +299,6 @@
 
 // export default IdeaSubmission;
 
-
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -320,6 +317,8 @@ const IdeaSubmission = () => {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const teamUser = JSON.parse(localStorage.getItem("teamUser"));
+  const email = teamUser?.email;
 
   /* =========================
      RESET STATE ON ROUTE ENTRY
@@ -331,14 +330,15 @@ const IdeaSubmission = () => {
   }, [location.pathname]);
 
   /* =========================
-     🔒 CHECK SUBMISSION STATUS
-     (THIS WAS MISSING)
+     CHECK SUBMISSION STATUS
   ========================= */
   useEffect(() => {
+    if (!email) return;
+
     const checkSubmissionStatus = async () => {
       try {
         const res = await axios.get(
-          "http://127.0.0.1:8088/api/idea-submission/team/1"
+          `http://127.0.0.1:8088/api/idea-submission/team/${email}`
         );
 
         if (res.data.submitted) {
@@ -361,7 +361,7 @@ const IdeaSubmission = () => {
     };
 
     checkSubmissionStatus();
-  }, []);
+  }, [email]);
 
   /* =========================
      HANDLE INPUT CHANGE
@@ -372,17 +372,21 @@ const IdeaSubmission = () => {
   };
 
   /* =========================
-     HANDLE SUBMIT (API CALL)
+     HANDLE SUBMIT
   ========================= */
   const handleSubmit = async () => {
-    // 🔥 DEBUG — THIS MUST PRINT
     console.log("🚀 HANDLE SUBMIT FIRED");
 
-    // 🔒 HARD BLOCK — DO NOT POST AGAIN
+    // 🔒 Do not submit again
     if (submitted) return;
 
     if (!idea.title || !idea.description || !idea.summary || !idea.driveLink) {
       alert("Please fill all required fields.");
+      return;
+    }
+
+    if (!email) {
+      alert("User email not found. Please log in again.");
       return;
     }
 
@@ -392,8 +396,7 @@ const IdeaSubmission = () => {
       await axios.post(
         "http://127.0.0.1:8088/api/idea-submission",
         {
-          team_id: 1,
-          team_name: "Innovators Squad",
+          email, // ✅ REQUIRED
           title: idea.title,
           description: idea.description,
           summary: idea.summary,
@@ -409,7 +412,6 @@ const IdeaSubmission = () => {
       setSubmitted(true);
       alert("Idea submitted successfully!");
     } catch (err) {
-      // ✅ HANDLE 409 PROPERLY
       if (err.response?.status === 409) {
         setSubmitted(true);
         alert("Idea already submitted. Editing is disabled.");
@@ -537,6 +539,9 @@ const IdeaSubmission = () => {
                 Reference Links (Optional)
               </h2>
 
+              <label className="block font-medium text-gray-700 mb-1">
+                GitHub Profile Link <span className="text-red-600">*</span>
+              </label>
               <input
                 type="url"
                 name="github"
@@ -546,6 +551,9 @@ const IdeaSubmission = () => {
                 className="w-full rounded-lg border border-gray-300 p-3 mb-4"
               />
 
+              <label className="block font-medium text-gray-700 mb-1">
+                Youtube Channel Link <span className="text-red-600">*</span>
+              </label>
               <input
                 type="url"
                 name="youtube"

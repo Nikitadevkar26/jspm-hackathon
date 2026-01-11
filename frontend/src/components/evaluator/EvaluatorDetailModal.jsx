@@ -34,7 +34,7 @@ export default function EvaluatorDetailModal({
         const token = localStorage.getItem("adminToken");
 
         const { data } = await axios.get(
-          `http://localhost:8088/api/evaluators/${evaluatorId}`,
+          `http://localhost:8088/api/admin/evaluators/${evaluatorId}`,
           {
             headers: {
               Authorization: token ? `Bearer ${token}` : "",
@@ -141,12 +141,12 @@ export default function EvaluatorDetailModal({
 
                   <div className="bg-gray-100 p-2 rounded flex justify-center">
                     <img
-                      src={`${FILE_BASE_URL}/id-proofs/${evaluator.id_proof_image}`}
+                      src={`${FILE_BASE_URL}/evaluator-id-proof/${evaluator.id_proof_image}`}
                       alt="ID Proof"
                       className="max-h-64 object-contain rounded border bg-white cursor-zoom-in"
                       onClick={() =>
                         window.open(
-                          `${FILE_BASE_URL}/id-proofs/${evaluator.id_proof_image}`,
+                          `${FILE_BASE_URL}/evaluator-id-proof/${evaluator.id_proof_image}`,
                           "_blank"
                         )
                       }

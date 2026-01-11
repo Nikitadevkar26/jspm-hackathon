@@ -9,262 +9,229 @@ const initializeDatabase = async () => {
 
     /* 1️⃣ Create & Use Database */
     await connection.query(`
-      CREATE DATABASE IF NOT EXISTS innovationjscoe
+      CREATE DATABASE IF NOT EXISTS innovationjscoe_new
       DEFAULT CHARACTER SET utf8mb4
       COLLATE utf8mb4_0900_ai_ci
     `);
 
-    await connection.query(`USE innovationjscoe`);
+    await connection.query(`USE innovationjscoe_new`);
 
-    /* 2️⃣ Drop existing views & tables (FK-safe order) */
-    const dropStatements = [
-      `DROP VIEW IF EXISTS team_evaluator_assignments_view`,
-      `DROP TABLE IF EXISTS team_evaluator_assignments`,
-      `DROP TABLE IF EXISTS evaluation_scores`,
-      `DROP TABLE IF EXISTS idea_submission`,
-      `DROP TABLE IF EXISTS grievances`,
-      `DROP TABLE IF EXISTS team_members`,
-      `DROP TABLE IF EXISTS notices`,
-      `DROP TABLE IF EXISTS section_heads`,
-      `DROP TABLE IF EXISTS evaluators`,
-      // ❌ DO NOT DROP admins
-    ];
-
-
-    for (const stmt of dropStatements) {
-      await connection.query(stmt);
-    }
-
-    /* 3️⃣ Create Tables */
+    /* 2️⃣ Create Tables (SAFE – NO DROPS) */
     const createTables = [
-      /* Admins */
+
+      /* ================= ADMINS ================= */
       `
       CREATE TABLE IF NOT EXISTS admins (
         admin_id INT NOT NULL AUTO_INCREMENT,
-        name VARCHAR(100) NOT NULL,
+        name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (admin_id),
         UNIQUE KEY email (email)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+      ) ENGINE=InnoDB
+      `,
+      
+      /* ================= EVALUATORS ================= */
+      `
+      CREATE TABLE IF NOT EXISTS evaluators (
+        evaluator_id INT NOT NULL AUTO_INCREMENT,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        organization VARCHAR(150) NOT NULL,
+        department VARCHAR(150) NOT NULL,
+        role VARCHAR(150) NOT NULL,
+        country VARCHAR(100) NOT NULL,
+        state VARCHAR(100) NOT NULL,
+        city VARCHAR(100) NOT NULL,
+        id_proof_image VARCHAR(255),
+        resume_drive_url VARCHAR(500) NOT NULL,
+        github_profile_url VARCHAR(300),
+        youtube_channel_url VARCHAR(300),
+        status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
+        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        profile_image VARCHAR(255),
+        resume_file VARCHAR(255),
+        approved_at DATETIME,
+        PRIMARY KEY (evaluator_id),
+        UNIQUE KEY email (email)
+      ) ENGINE=InnoDB
       `,
 
-      /* Evaluators */
+      /* ================= SECTION HEADS ================= */
       `
-CREATE TABLE evaluators (
-  evaluator_id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  phone VARCHAR(20) NOT NULL,
-  organization VARCHAR(150) NOT NULL,
-  department VARCHAR(150) NOT NULL,
-  role VARCHAR(150) NOT NULL,
-  country VARCHAR(100) NOT NULL,
-  state VARCHAR(100) NOT NULL,
-  city VARCHAR(100) NOT NULL,
-  id_proof_image VARCHAR(255) NULL,
-  resume_drive_url VARCHAR(500) NOT NULL,
-  status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
-  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  profile_image VARCHAR(255) NULL,
-  resume_file VARCHAR(255) NULL,
-  approved_at DATETIME NULL,
-  PRIMARY KEY (evaluator_id),
-  UNIQUE KEY email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-`
-      ,
-
-      /* Section Heads */
-      `
-      CREATE TABLE section_heads (
+      CREATE TABLE IF NOT EXISTS section_heads (
         sh_id INT NOT NULL AUTO_INCREMENT,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
         status ENUM('active','inactive') NOT NULL DEFAULT 'active',
-        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        role ENUM('Section Head') NOT NULL DEFAULT 'Section Head',
         PRIMARY KEY (sh_id),
         UNIQUE KEY email (email)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+      ) ENGINE=InnoDB
       `,
 
-      /* Notices */
+      /* ================= NOTICES ================= */
       `
-      CREATE TABLE notices (
+      CREATE TABLE IF NOT EXISTS notices (
         notice_id INT NOT NULL AUTO_INCREMENT,
         title VARCHAR(255) NOT NULL,
         description TEXT,
         posted_by VARCHAR(100),
         created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (notice_id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+      ) ENGINE=InnoDB
       `,
 
-      /* Teams */
+      /* ================= TEAMS ================= */
       `
       CREATE TABLE IF NOT EXISTS teams (
-  team_id INT NOT NULL AUTO_INCREMENT,
-  team_name VARCHAR(255) NOT NULL,
-
-  -- from form
-  institution VARCHAR(255) DEFAULT NULL,
-  college_type ENUM('Autonomous','Private','Affiliated','Government'),
-  country VARCHAR(100) DEFAULT 'India',
-  state VARCHAR(100) DEFAULT NULL,
-  pincode VARCHAR(20),
-
-  leader_name VARCHAR(100) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-
-  -- from form
-  problem_statement_category ENUM('Software','Hardware') NOT NULL,
-  project_title VARCHAR(255),
-  project_description TEXT NOT NULL,
-  theme VARCHAR(255),
-
-  score INT,
-  status ENUM('approved','rejected','Pending') DEFAULT 'Pending',
-  payment_proof_image VARCHAR(255),
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (team_id),
-  UNIQUE KEY email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-      `,   // ✅ THIS COMMA WAS MISSING
-
-      /* Team Members */
-      `
-      CREATE TABLE IF NOT EXISTS team_members (
-  member_id INT NOT NULL AUTO_INCREMENT,
-  team_id INT NOT NULL,
-
-  member_name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  phone VARCHAR(20) NOT NULL,
-  gender ENUM('Male','Female','Other') NOT NULL,
-
-  branch VARCHAR(100) NOT NULL,
-  stream VARCHAR(100) NOT NULL,
-  year VARCHAR(50) NOT NULL,
-
-  college_name VARCHAR(255) NOT NULL,
-  state VARCHAR(100) NOT NULL,
-  city VARCHAR(100) NOT NULL,
-
-  id_proof_image VARCHAR(255),
-  role VARCHAR(50),
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-  PRIMARY KEY (member_id),
-  KEY team_id (team_id),
-  CONSTRAINT fk_team_members_team
-    FOREIGN KEY (team_id)
-    REFERENCES teams(team_id)
-    ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+        team_id INT NOT NULL AUTO_INCREMENT,
+        team_name VARCHAR(255) NOT NULL,
+        college_type ENUM('Autonomous','Private','Affiliated','Government'),
+        country VARCHAR(100) DEFAULT 'India',
+        pincode VARCHAR(20),
+        leader_name VARCHAR(100) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        project_title VARCHAR(255),
+        theme VARCHAR(255),
+        score INT,
+        status ENUM('approved','rejected','Pending') DEFAULT 'Pending',
+        payment_proof_image VARCHAR(255),
+        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        is_scored TINYINT(1) NOT NULL DEFAULT 0,
+        PRIMARY KEY (team_id),
+        UNIQUE KEY team_name (team_name),
+        UNIQUE KEY email (email)
+      ) ENGINE=InnoDB
       `,
 
-
-      /* Grievances */
+      /* ================= TEAM MEMBERS ================= */
       `
-      CREATE TABLE grievances (
+      CREATE TABLE IF NOT EXISTS team_members (
+        member_id INT NOT NULL AUTO_INCREMENT,
+        team_id INT NOT NULL,
+        member_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(45),
+        gender VARCHAR(45),
+        branch VARCHAR(255),
+        stream VARCHAR(255),
+        year VARCHAR(45),
+        college_name VARCHAR(255),
+        state VARCHAR(255),
+        city VARCHAR(255),
+        id_proof_image VARCHAR(255),
+        role VARCHAR(45),
+        PRIMARY KEY (member_id),
+        UNIQUE KEY email (email),
+        KEY team_id (team_id)
+      ) ENGINE=InnoDB
+      `,
+
+      /* ================= USER LOGINS ================= */
+      `
+      CREATE TABLE IF NOT EXISTS user_logins (
+        login_id INT NOT NULL AUTO_INCREMENT,
+        team_id INT NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        must_reset_password TINYINT(1) DEFAULT 1,
+        PRIMARY KEY (login_id),
+        UNIQUE KEY email (email),
+        KEY team_id (team_id)
+      ) ENGINE=InnoDB
+      `,
+
+      /* ================= IDEA SUBMISSION ================= */
+      `
+      CREATE TABLE IF NOT EXISTS idea_submission (
+        id INT NOT NULL AUTO_INCREMENT,
+        team_id INT NOT NULL,
+        team_name VARCHAR(150) NOT NULL,
+        title VARCHAR(100) NOT NULL,
+        description TEXT NOT NULL,
+        summary TEXT NOT NULL,
+        drive_link VARCHAR(500) NOT NULL,
+        github_link VARCHAR(300),
+        youtube_link VARCHAR(300),
+        submission_status ENUM('SUBMITTED','UNDER_REVIEW','APPROVED','REJECTED') DEFAULT 'SUBMITTED',
+        submitted_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+          ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY team_id (team_id)
+      ) ENGINE=InnoDB
+      `,
+
+      /* ================= GRIEVANCES ================= */
+      `
+      CREATE TABLE IF NOT EXISTS grievances (
         grievance_id INT NOT NULL AUTO_INCREMENT,
         team_id INT NOT NULL,
         message TEXT NOT NULL,
         status ENUM('Open','Resolved') DEFAULT 'Open',
         created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (grievance_id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+      ) ENGINE=InnoDB
       `,
 
-      /* Idea Submission */
+      /* ================= EVALUATION SCORES ================= */
       `
-CREATE TABLE idea_submission (
-  id INT NOT NULL AUTO_INCREMENT,
-  team_id INT NOT NULL,
-  team_name VARCHAR(150) NOT NULL,
-  title VARCHAR(100) NOT NULL,
-  description TEXT NOT NULL,
-  summary TEXT NOT NULL,
-  drive_link VARCHAR(500) NOT NULL,
-  github_link VARCHAR(300) NULL,
-  youtube_link VARCHAR(300) NULL,
-  submission_status ENUM(
-    'SUBMITTED',
-    'UNDER_REVIEW',
-    'APPROVED',
-    'REJECTED'
-  ) DEFAULT 'SUBMITTED',
-  submitted_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
-    ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  UNIQUE KEY team_id (team_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-`
-      ,
-
-      /* Evaluation Scores */
-      `
-      CREATE TABLE evaluation_scores (
-        eval_id INT NOT NULL AUTO_INCREMENT,
+      CREATE TABLE IF NOT EXISTS evaluation_scores (
         evaluator_id INT NOT NULL,
         team_id INT NOT NULL,
-        innovation INT DEFAULT 0,
-        impact INT DEFAULT 0,
-        feasibility INT DEFAULT 0,
-        presentation INT DEFAULT 0,
-        total_score INT DEFAULT 0,
+        novelty INT NOT NULL DEFAULT 0,
+        clarity INT NOT NULL DEFAULT 0,
+        feasibility INT NOT NULL DEFAULT 0,
+        impact INT NOT NULL DEFAULT 0,
+        future_scope INT NOT NULL DEFAULT 0,
+        total_score INT NOT NULL DEFAULT 0,
+        comments TEXT,
         created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (eval_id),
-        CONSTRAINT fk_eval_scores_evaluator
-          FOREIGN KEY (evaluator_id)
-          REFERENCES evaluators (evaluator_id)
-          ON DELETE CASCADE
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        PRIMARY KEY (evaluator_id, team_id)
+      ) ENGINE=InnoDB
       `,
 
-      /* Team Evaluator Assignments */
+      /* ================= TEAM EVALUATOR ASSIGNMENTS ================= */
       `
-      CREATE TABLE team_evaluator_assignments (
+      CREATE TABLE IF NOT EXISTS team_evaluator_assignments (
         assignment_id INT NOT NULL AUTO_INCREMENT,
         team_id INT NOT NULL,
         evaluator_id INT NOT NULL,
         assigned_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (assignment_id),
-        CONSTRAINT fk_assignment_evaluator
-          FOREIGN KEY (evaluator_id)
-          REFERENCES evaluators (evaluator_id)
-          ON DELETE CASCADE
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-      `,
+        KEY team_id (team_id),
+        KEY evaluator_id (evaluator_id)
+      ) ENGINE=InnoDB
+      `
     ];
 
     for (const stmt of createTables) {
       await connection.query(stmt);
     }
 
-    /* 4️⃣ Create View */
+    /* 3️⃣ CREATE VIEW (SAFE) */
     await connection.query(`
-      CREATE VIEW team_evaluator_assignments_view AS
+      CREATE OR REPLACE VIEW team_evaluator_assignments_view AS
       SELECT
         a.assignment_id,
         a.assigned_at,
         a.team_id,
-        e.evaluator_id,
+        a.evaluator_id,
         e.name AS evaluator_name
       FROM team_evaluator_assignments a
       JOIN evaluators e
         ON a.evaluator_id = e.evaluator_id
     `);
 
-    console.log("✅ Database initialized successfully.");
+    console.log("✅ Database initialized exactly as per schema (NO DROPS).");
+
   } catch (error) {
     console.error("❌ Database initialization failed:", error);
     process.exit(1);

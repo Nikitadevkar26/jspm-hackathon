@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const EvaluatorLoginModel = require("../../models/evaluator/evaluatorLoginModel");
 
 /* ===============================
@@ -40,9 +41,20 @@ exports.loginEvaluator = async (req, res) => {
       });
     }
 
+    /* ---------------- JWT TOKEN (CRITICAL FIX) ---------------- */
+    const token = jwt.sign(
+      {
+        email: evaluator.email,        // ✅ REQUIRED for profile API
+        role: "evaluator"
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "8h" }
+    );
+
     /* ---------------- SUCCESS RESPONSE ---------------- */
     return res.status(200).json({
       message: "Login successful",
+      token,                           // ✅ SEND TOKEN
       user: {
         evaluator_id: evaluator.evaluator_id,
         name: evaluator.name,

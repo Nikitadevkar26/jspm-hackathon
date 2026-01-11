@@ -60,7 +60,7 @@ const SetPassword = () => {
       };
       localStorage.setItem("teamUser", JSON.stringify(updatedUser));
 
-      setSuccess("Password updated successfully!");
+      setSuccess("Password updated successfully! Please login again.");
       setPassword("");
       setConfirmPassword("");
 

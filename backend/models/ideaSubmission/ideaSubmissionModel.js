@@ -1,9 +1,29 @@
 // src/models/ideaSubmissionModel.js
-const db = require("../../config/db"); // mysql2 connection
+const db = require("../../config/db");
 
 const IdeaSubmission = {
-  // CREATE / SUBMIT IDEA
+
+  // CREATE / SUBMIT IDEA (EMAIL BASED)
   create: async (data) => {
+
+    // 1️⃣ Resolve team from email
+    const teamSql = `
+      SELECT team_id, team_name
+      FROM teams
+      WHERE email = ?
+      LIMIT 1
+    `;
+    const [teams] = await db.query(teamSql, [data.email]);
+
+    if (teams.length === 0) {
+      const err = new Error("Team not found");
+      err.code = "TEAM_NOT_FOUND";
+      throw err;
+    }
+
+    const { team_id, team_name } = teams[0];
+
+    // 2️⃣ Insert idea
     const sql = `
       INSERT INTO idea_submission
       (team_id, team_name, title, description, summary, drive_link, github_link, youtube_link)
@@ -11,8 +31,8 @@ const IdeaSubmission = {
     `;
 
     const values = [
-      data.team_id,
-      data.team_name,
+      team_id,
+      team_name,
       data.title,
       data.description,
       data.summary,
@@ -25,18 +45,20 @@ const IdeaSubmission = {
     return result;
   },
 
-  // GET IDEA BY TEAM ID
-  getByTeamId: async (teamId) => {
+  // GET IDEA BY EMAIL (NEW)
+  getByEmail: async (email) => {
     const sql = `
-      SELECT * FROM idea_submission
-      WHERE team_id = ?
+      SELECT i.*
+      FROM idea_submission i
+      JOIN teams t ON i.team_id = t.team_id
+      WHERE t.email = ?
       LIMIT 1
     `;
-    const [rows] = await db.query(sql, [teamId]);
+    const [rows] = await db.query(sql, [email]);
     return rows;
   },
 
-  // GET IDEA BY ID (ADMIN / EVALUATOR)
+  // GET IDEA BY ID
   getById: async (id) => {
     const sql = `SELECT * FROM idea_submission WHERE id = ?`;
     const [rows] = await db.query(sql, [id]);

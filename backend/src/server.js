@@ -1,5 +1,6 @@
+require("dotenv").config();   // ✅ MUST BE FIRST
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+// require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const app = require('./app');
 const initializeDatabase = require("../utils/databaseInitializer"); // Import the initializer
 const createTestAdmin = require('../create_test_admin'); // 👈 REQUIRED
